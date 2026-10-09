@@ -15,6 +15,11 @@ This repository accompanies the frozen project manuscript.
 - `scripts/02_run_simulations.R` — full reconstructed Monte Carlo engine.
 - `scripts/03_verify_against_frozen.R` — checks rerun simulation summaries against the frozen manuscript results.
 - `results/frozen/` — numerical simulation summaries reported in the manuscript.
+- `results/empirical/` — matching empirical outputs and documented manuscript table transcriptions.
+- `figures/` — calibration, discrimination, and threshold figures extracted from the manuscript.
+- `data/DATA_DICTIONARY.csv` — required variables, analysis roles, and measurement limitations.
+- `environment/sessionInfo_recorded.txt` — supplied R environment record.
+- `scripts/04_capture_environment.R` — captures an actual renv lockfile in the original verified R environment.
 - `results/rerun/` — destination for fresh simulation outputs.
 - `data/` — data instructions and checksum. Row-level datasets are not included.
 - `environment/package_versions.R` — records the local R/package environment.
@@ -79,3 +84,4 @@ Author: Silas Bambil. See `CITATION.cff` for citation metadata.
 
 This repository is being prepared for archival through Zenodo. No DOI has been assigned or verified yet.
 The repository uses the existing MIT license.
+

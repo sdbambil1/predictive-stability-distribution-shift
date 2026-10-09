@@ -1,0 +1,19 @@
+Variable,Analysis_role,Description_and_limits
+LoanID,identifier,Excluded from predictors; required to be complete and unique.
+Age,numeric predictor,Borrower age; source name indicates age. Unit should be checked against source documentation.
+Income,numeric predictor,Borrower income; currency and measurement period not established in the archived source.
+LoanAmount,numeric predictor,Loan amount; currency not established in the archived source.
+CreditScore,numeric predictor,Credit score; scoring system not documented here.
+MonthsEmployed,numeric predictor,"Employment duration in months, as indicated by the field name."
+NumCreditLines,numeric predictor,Number of credit lines.
+InterestRate,numeric predictor,Interest rate; percentage versus decimal encoding must be verified from source.
+LoanTerm,numeric predictor,Scheduled loan term; not observed time to default. Unit must be verified from source.
+DTIRatio,numeric predictor,Debt-to-income ratio; calculation and encoding must be verified from source.
+Education,categorical predictor,Education category; levels read from the input file.
+EmploymentType,categorical predictor,Employment category; levels read from the input file.
+MaritalStatus,categorical predictor,Marital status; levels read from the input file.
+HasMortgage,categorical predictor,Mortgage indicator; encoding read from the input file.
+HasDependents,categorical predictor,Dependents indicator; encoding read from the input file.
+LoanPurpose,categorical predictor,Loan purpose; levels read from the input file.
+HasCoSigner,categorical predictor,Co-signer indicator; encoding read from the input file.
+Default,binary outcome,"0 = nondefault, 1 = default; complete 0/1 coding required. Outcome horizon is undocumented."
