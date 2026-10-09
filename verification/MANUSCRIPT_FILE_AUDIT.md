@@ -31,10 +31,14 @@ Audited against the supplied 17-page publication manuscript dated October 5, 202
 
 ## Remaining limitations before a complete reproducibility deposit
 
-1. The manuscript R Markdown data/code availability sections have now been updated to link to GitHub and accurately state the partial deposit. The supplied PDF still has the earlier availability statements and must be regenerated from the revised source before final archival. Numerical findings and methods were unchanged.
+1. The manuscript R Markdown data/code availability sections have now been updated to link to GitHub and accurately state the partial deposit. The author-regenerated PDF now contains the revised availability statements and has replaced the earlier PDF. Numerical findings and methods were unchanged.
 2. Full raw simulation records, original supporting 1,000-replication scripts/settings, and the complete instrumented diagnostic script have not all been deposited. The uploaded recovered adaptation script supports the original 500-replication adaptation design, not the separate supporting designs.
-3. No original renv.lock was found and R is unavailable in this audit environment. An actual lockfile must be captured in the original verified R project. Publication and supplement rendering have not been tested here.
+3. No original renv.lock was found and R is unavailable in this audit environment. An actual lockfile must be captured in the original verified R project. The author successfully rendered the revised publication PDF in RStudio, and the supplied output was checked. Supplement rendering has not been rerun during this audit.
 4. Row-level empirical and stress-test inputs are omitted. Input acquisition and fingerprints are documented. Their model objects and borrower-level predictions were not independently re-audited.
 5. `results/empirical/test_bootstrap_intervals_reported.csv` contains rounded intervals from the earlier empirical report. The publication manuscript does not report those intervals; do not treat it as a new publication result or merge it with a separate bootstrap run.
 
 Zenodo archival should follow these remaining availability and reproducibility decisions. No DOI is claimed by this audit.
+
+## Updated PDF verification: October 9, 2026
+
+The author supplied `paper_reproduced.pdf` (17 pages). It contains the revised GitHub availability wording and retains the prior scientific findings. Extracted text on pages 1-14 is unchanged; conclusion and reference text also agree after removing page-number and whitespace differences. The revised availability page was visually checked and GitHub link targets were confirmed in the PDF. The PDF replaces `manuscript/paper.pdf`; its Git blob SHA is `3f0b7e06285af92bfd969064fdf266bb77925acf`. Rendering from summary inputs is not a fresh rerun of the empirical or simulation models.

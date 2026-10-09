@@ -2,7 +2,7 @@
 
 ## Publication manuscript
 
-The main manuscript is the supplied 17-page publication PDF from October 5, 2026, with the supplied `paper_publication_FINAL_VERIFIED(4).Rmd` source. Its bibliography and required summary inputs are bundled. The first page, title, page count, and source input paths were checked during upload. The PDF was not freshly knitted and no models were rerun in this environment.
+The main manuscript is the author-regenerated 17-page publication PDF from October 9, 2026, using the publication source with updated data/code availability wording. Its bibliography and required summary inputs are bundled. The first page, title, page count, and source input paths were checked during upload. The author knitted the updated PDF in RStudio. Its availability page was visually reviewed, and its preceding manuscript text and conclusion/reference text matched the previous PDF. No empirical or simulation models were rerun during this verification.
 
 ## Supporting analysis
 
