@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "Please cite this research software when using it."
+title: "Predictive Stability Under Distribution Shift: Calibration, Discrimination, and Decision Thresholds with a Loan-Default Application"
+type: software
+authors:
+  - family-names: Bambil
+    given-names: Silas
+repository-code: "https://github.com/sdbambil1/predictive-stability-distribution-shift"
+license: MIT
