@@ -35,9 +35,9 @@ The paper combines a loan-default baseline with controlled distribution-shift ex
 
 The poster is excluded.
 
-## PDF rendering status
+## PDF and source synchronized
 
-The author regenerated the PDF on October 9 before DOI assignment. The R Markdown source now includes the archive DOI; the PDF needs to be rendered again to include it. The updated availability page was visually checked; pages 1-14 and the conclusion/reference text agree with the prior manuscript. Numerical results are unchanged. The uploaded PDF bytes were verified against the GitHub copy.
+The publication PDF was regenerated from the DOI-bearing R Markdown source on October 9, 2026. It remains 17 pages and includes the Zenodo v1.0.1 archive DOI. The updated availability page and page layouts were visually checked, and the principal numerical results were checked against the previous PDF. Rendering with the current software changed citation formatting and some page breaks. This rendering used the supplied summaries; it did not rerun the underlying models.
 
 ## Render the publication manuscript
 
@@ -61,4 +61,4 @@ See `CITATION.cff`. The existing repository license is MIT. Release v1.0.1 is ar
 
 ## File consistency audit
 
-See [the audit report](verification/MANUSCRIPT_FILE_AUDIT.md). The principal empirical and adaptation values match the publication manuscript. The deposit remains partial: full supporting scripts/raw records and an actual renv lockfile are not all present. The newly added archive DOI is in the R Markdown source and awaits PDF rendering.
+See [the audit report](verification/MANUSCRIPT_FILE_AUDIT.md). The principal empirical and adaptation values match the publication manuscript. The deposit remains partial: full supporting scripts/raw records and an actual renv lockfile are not all present. The archive DOI is included in both the R Markdown source and regenerated PDF.
