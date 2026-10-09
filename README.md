@@ -35,9 +35,9 @@ The paper combines a loan-default baseline with controlled distribution-shift ex
 
 The poster is excluded.
 
-## PDF and source synchronized
+## PDF rendering status
 
-The author regenerated the PDF from the revised source. The updated availability page was visually checked; pages 1-14 and the conclusion/reference text agree with the prior manuscript. Numerical results are unchanged. The uploaded PDF bytes were verified against the GitHub copy.
+The author regenerated the PDF on October 9 before DOI assignment. The R Markdown source now includes the archive DOI; the PDF needs to be rendered again to include it. The updated availability page was visually checked; pages 1-14 and the conclusion/reference text agree with the prior manuscript. Numerical results are unchanged. The uploaded PDF bytes were verified against the GitHub copy.
 
 ## Render the publication manuscript
 
@@ -57,8 +57,8 @@ The main empirical CSV and row-level validation file are not redistributed. An o
 
 ## Citation and archive
 
-See `CITATION.cff`. The existing repository license is MIT. Zenodo archival and DOI assignment remain pending; no verified DOI is available yet.
+See `CITATION.cff`. The existing repository license is MIT. Release v1.0.1 is archived with DOI [10.5281/zenodo.23256375](https://doi.org/10.5281/zenodo.23256375), supplied by the author. The DOI identifies the repository release, including the manuscript and supporting materials.
 
 ## File consistency audit
 
-See [the audit report](verification/MANUSCRIPT_FILE_AUDIT.md). The principal empirical and adaptation values match the publication manuscript. The deposit remains partial: full supporting scripts/raw records and an actual renv lockfile are not all present. The data/code availability wording is updated in both the R Markdown source and the regenerated PDF.
+See [the audit report](verification/MANUSCRIPT_FILE_AUDIT.md). The principal empirical and adaptation values match the publication manuscript. The deposit remains partial: full supporting scripts/raw records and an actual renv lockfile are not all present. The newly added archive DOI is in the R Markdown source and awaits PDF rendering.

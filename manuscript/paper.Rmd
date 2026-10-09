@@ -548,7 +548,7 @@ The repository includes retained failure-pattern summaries, adaptation and thres
 
 The publication and supplementary R Markdown sources, bibliography, supporting empirical pipeline, reconstructed initial simulation script, recovered 500-replication adaptation script, rendering scripts, and selected verification records are available at https://github.com/sdbambil1/predictive-stability-distribution-shift. The initial simulation script reconstructs the documented design; it is not the preserved original standalone source. The repository does not yet contain every script, setting, and full replication-level record for the separate supporting experiments or instrumented calibration diagnostic. Recorded R session information is supplied, but an original environment lockfile has not yet been deposited.
 
-The repository documents the scope and limitations of the file-consistency checks. Reproducibility checks and their limits are described in Section 11.1. A permanent Zenodo archive and DOI are pending.
+The repository documents the scope and limitations of the file-consistency checks. Reproducibility checks and their limits are described in Section 11.1. Release v1.0.1 of the repository, including the manuscript and supporting materials, is archived in Zenodo at https://doi.org/10.5281/zenodo.23256375. This DOI identifies the archived repository release.
 
 ## Use of generative AI
 
