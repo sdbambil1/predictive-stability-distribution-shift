@@ -540,11 +540,15 @@ Adaptation summaries were independently recalculated from the supplied raw recor
 
 ## Data availability
 
-The benchmark dataset is publicly available from https://www.kaggle.com/datasets/nikhil1e9/loan-default [@nikhil2023]. The source advertises a CC0: Public Domain license and attributes the dataset to Coursera's Loan Default Prediction Challenge. The original collection process and default observation horizon remain undocumented. A comparison of the supplied CSV with the Kaggle download yielded the same SHA-256 checksum: `1d7556a9071e7f9e872dc05a0cad174229fb1164b1cf3470ad35eed195c24278`. Simulation result files are retained by the author locally and have not been publicly deposited. The synthetic stress-test dataset is not an external validation dataset.
+The benchmark dataset is publicly available from https://www.kaggle.com/datasets/nikhil1e9/loan-default [@nikhil2023]. The source advertises a CC0: Public Domain license and attributes the dataset to Coursera's Loan Default Prediction Challenge. The original collection process and default observation horizon remain undocumented. A comparison of the supplied CSV with the Kaggle download yielded the same SHA-256 checksum: `1d7556a9071e7f9e872dc05a0cad174229fb1164b1cf3470ad35eed195c24278`. Input acquisition instructions and fingerprints are provided in the project repository at https://github.com/sdbambil1/predictive-stability-distribution-shift. The benchmark CSV and synthetic stress-test input are not redistributed in that repository. The synthetic stress-test dataset is not an external validation dataset.
+
+The repository includes retained failure-pattern summaries, adaptation and threshold summaries, supporting sample-size summaries, and selected verification records. Some complete replication-level records remain retained locally by the author. The deposited summaries support the manuscript tables and figures; their agreement with recorded replication-level metrics does not constitute independent re-execution of the underlying models.
 
 ## Code availability
 
-The author retains the empirical R Markdown pipeline, reconstructed initial simulation script, adaptation and figure scripts, and verification records. The initial simulation script reconstructs the documented design; it is not the preserved original source. The scripts and results have not yet been deposited in a public repository. Reproducibility checks and their limits are described in Section 11.1.
+The publication and supplementary R Markdown sources, bibliography, supporting empirical pipeline, reconstructed initial simulation script, recovered 500-replication adaptation script, rendering scripts, and selected verification records are available at https://github.com/sdbambil1/predictive-stability-distribution-shift. The initial simulation script reconstructs the documented design; it is not the preserved original standalone source. The repository does not yet contain every script, setting, and full replication-level record for the separate supporting experiments or instrumented calibration diagnostic. Recorded R session information is supplied, but an original environment lockfile has not yet been deposited.
+
+The repository documents the scope and limitations of the file-consistency checks. Reproducibility checks and their limits are described in Section 11.1. A permanent Zenodo archive and DOI are pending.
 
 ## Use of generative AI
 

@@ -31,7 +31,7 @@ Audited against the supplied 17-page publication manuscript dated October 5, 202
 
 ## Remaining limitations before a complete reproducibility deposit
 
-1. The supplied manuscript PDF and source still say that scripts and results have not been publicly deposited. That availability statement predates this GitHub upload and should be revised in both source and a newly rendered PDF before the final archive. The manuscript itself was kept unchanged during this audit.
+1. The manuscript R Markdown data/code availability sections have now been updated to link to GitHub and accurately state the partial deposit. The supplied PDF still has the earlier availability statements and must be regenerated from the revised source before final archival. Numerical findings and methods were unchanged.
 2. Full raw simulation records, original supporting 1,000-replication scripts/settings, and the complete instrumented diagnostic script have not all been deposited. The uploaded recovered adaptation script supports the original 500-replication adaptation design, not the separate supporting designs.
 3. No original renv.lock was found and R is unavailable in this audit environment. An actual lockfile must be captured in the original verified R project. Publication and supplement rendering have not been tested here.
 4. Row-level empirical and stress-test inputs are omitted. Input acquisition and fingerprints are documented. Their model objects and borrower-level predictions were not independently re-audited.

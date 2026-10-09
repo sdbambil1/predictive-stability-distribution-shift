@@ -8,7 +8,7 @@ Author: Silas Bambil
 
 [Read the publication manuscript](manuscript/paper.pdf)
 
-The main PDF is the 17-page publication manuscript supplied on October 5, 2026 (`paper_publication_FINAL_VERIFIED(20261005-151516).pdf`). Its supplied R Markdown source is `paper_publication_FINAL_VERIFIED(4).Rmd`, stored here as `manuscript/paper.Rmd`. These replace the earlier 36-page project manuscript previously uploaded to these paths. The repository does not assert journal acceptance or publication.
+The main PDF is the 17-page publication manuscript supplied on October 5, 2026 (`paper_publication_FINAL_VERIFIED(20261005-151516).pdf`). Its supplied R Markdown source is `paper_publication_FINAL_VERIFIED(4).Rmd`, stored here as `manuscript/paper.Rmd`, with the data/code availability wording subsequently updated to describe this repository. These replace the earlier 36-page project manuscript previously uploaded to these paths. The repository does not assert journal acceptance or publication.
 
 The paper combines a loan-default baseline with controlled distribution-shift experiments and compares recalibration, refitting, and threshold revision. It separates probability accuracy, calibration, discrimination, and classification decisions.
 
@@ -35,6 +35,10 @@ The paper combines a loan-default baseline with controlled distribution-shift ex
 
 The poster is excluded.
 
+## PDF regeneration pending
+
+The numerical results are unchanged. The R Markdown availability section now links to this repository and states its remaining reproducibility gaps. The supplied PDF has not yet been regenerated and still contains the earlier availability wording. Run the publication renderer in the original R project before creating the final Zenodo release.
+
 ## Render the publication manuscript
 
 With R, ggplot2, knitr, rmarkdown, Pandoc and XeLaTeX available, run from the repository root:
@@ -57,4 +61,4 @@ See `CITATION.cff`. The existing repository license is MIT. Zenodo archival and 
 
 ## File consistency audit
 
-See [the audit report](verification/MANUSCRIPT_FILE_AUDIT.md). The principal empirical and adaptation values match the publication manuscript. The deposit remains partial: full supporting scripts/raw records and an actual renv lockfile are not all present. The manuscript availability text also predates this upload and needs updating before final archival.
+See [the audit report](verification/MANUSCRIPT_FILE_AUDIT.md). The principal empirical and adaptation values match the publication manuscript. The deposit remains partial: full supporting scripts/raw records and an actual renv lockfile are not all present. The data/code availability wording has been updated in the R Markdown source. The supplied PDF still contains the earlier availability wording and must be regenerated before final archival.
