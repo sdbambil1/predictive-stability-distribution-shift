@@ -7,3 +7,5 @@ authors:
     given-names: Silas
 repository-code: "https://github.com/sdbambil1/predictive-stability-distribution-shift"
 license: MIT
+# DOI identifies archived release v1.0.1, not later main-branch changes.
+doi: "10.5281/zenodo.23256375"
