@@ -7,7 +7,7 @@
       "affiliation": "Georgia State University"
     }
   ],
-  "description": "Research code, frozen manuscript, simulation summaries, and poster for a loan-default study of calibration, discrimination, and decision thresholds under distribution shift. The standalone Monte Carlo engine is reconstructed; execution verification is pending. See VERIFICATION_STATUS.md.",
+  "description": "Research code, frozen manuscript, and simulation summaries for a loan-default study of calibration, discrimination, and decision thresholds under distribution shift. The standalone Monte Carlo engine is reconstructed; execution verification is pending. See VERIFICATION_STATUS.md.",
   "license": "MIT",
   "keywords": [
     "calibration",
