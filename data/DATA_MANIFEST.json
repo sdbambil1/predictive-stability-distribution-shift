@@ -3,7 +3,7 @@
     "sha256": "1d7556a9071e7f9e872dc05a0cad174229fb1164b1cf3470ad35eed195c24278",
     "bytes": 24834870,
     "expected_rows": 255347,
-    "role": "Main empirical loan-default dataset. Place in data/ before running paper.Rmd."
+    "role": "Main empirical benchmark. Place in data/ before running scripts/01_render_empirical_paper.R and analysis/empirical_pipeline.Rmd."
   },
   "New_Loan_Validation_Data.csv": {
     "sha256": "698b01ec05027b30c8ef93c16baef500dd4d6f44d90fb692f4027ed2e0c5a504",

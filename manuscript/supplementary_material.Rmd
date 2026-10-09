@@ -1,0 +1,147 @@
+---
+title: "Supplementary Material: Predictive Stability and Adaptation Under Distribution Shift"
+author: "Silas Bambil"
+date: "2026"
+output:
+  pdf_document:
+    toc: false
+    number_sections: false
+    fig_caption: true
+    latex_engine: xelatex
+fontsize: 11pt
+geometry: margin=0.9in
+bibliography: references_publication_v5.bib
+link-citations: true
+references:
+  - id: davis2019updating
+    type: article-journal
+    title: A nonparametric updating method to correct clinical prediction model drift
+    author:
+      - {family: Davis, given: Sharon E.}
+      - {family: Greevy, given: Robert A.}
+      - {family: Fonnesbeck, given: Christopher}
+      - {family: Lasko, given: Thomas A.}
+      - {family: Walsh, given: Colin G.}
+      - {family: Matheny, given: Michael E.}
+    container-title: Journal of the American Medical Informatics Association
+    volume: 26
+    issue: 12
+    page: 1448-1457
+    issued: {date-parts: [[2019]]}
+    DOI: 10.1093/jamia/ocz127
+header-includes:
+  - \usepackage{xurl}
+  - \usepackage{microtype}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{float}
+  - \usepackage{placeins}
+  - \usepackage{adjustbox}
+  - \usepackage{caption}
+  - \usepackage{needspace}
+  - \captionsetup{font=small,labelfont=bf}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.align = "center",
+  out.width = "100%"
+)
+
+publication_dir <- "data"
+library(ggplot2)
+method_labels <- c(none="No adaptation", intercept_recal="Intercept recalibration",
+ intercept_slope_recal="Intercept + slope recalibration",
+ importance_weighted_refit="Importance-weighted refit", deployment_refit="Deployment refit")
+method_levels <- c("No adaptation", "Intercept recalibration",
+ "Intercept + slope recalibration", "Deployment refit", "Importance-weighted refit")
+plot_colours <- setNames(c("#555555", "#0072B2", "#009E73", "#D55E00", "#CC79A7"), method_levels)
+plot_shapes <- setNames(c(1,17,15,16,3), method_levels)
+plot_lines <- setNames(c("dashed","solid","dotdash","solid","dotted"), method_levels)
+shift_labels <- c(covariate_misspecified="Covariate shift + misspecification",
+ intercept_shift="Intercept shift", slope_shift="Predictor-effect shift")
+style_scales <- function() list(
+ scale_colour_manual(values=plot_colours, drop=FALSE),
+ scale_shape_manual(values=plot_shapes, drop=FALSE),
+ scale_linetype_manual(values=plot_lines, drop=FALSE))
+paper_theme <- function() theme_bw(base_size=12) + theme(
+ legend.position="bottom", panel.grid.minor=element_blank(),
+ strip.background=element_rect(fill="#EEEEEE"), strip.text=element_text(face="bold",size=10),
+ plot.title=element_text(face="bold"), plot.caption=element_text(hjust=0,size=10),
+ legend.text=element_text(size=10),
+ plot.margin=margin(10,12,10,12))
+probability <- read.csv("data/adaptation_probability_summary.csv")
+probability$Method <- factor(unname(method_labels[probability$method]), levels=method_levels)
+probability$Condition <- factor(probability$shift_type, levels=names(shift_labels), labels=unname(shift_labels))
+plot_probability <- function(metric, se, ylab) {
+ d <- probability
+ d$value <- d[[metric]]; d$lower <- d$value-1.96*d[[se]]; d$upper <- d$value+1.96*d[[se]]
+ ggplot(d,aes(shift_value,value,colour=Method,shape=Method,linetype=Method)) +
+ geom_line(linewidth=.65) + geom_errorbar(aes(ymin=lower,ymax=upper),width=0,linewidth=.35) +
+ geom_point(size=2) + facet_wrap(~Condition,ncol=3,scales="free_x") + style_scales() +
+ labs(x="Magnitude of distribution shift",y=ylab,colour=NULL,shape=NULL,linetype=NULL,
+ caption="Bars: approximate 95% Monte Carlo intervals; 500 replications per condition.") +
+ paper_theme() + guides(colour=guide_legend(nrow=2),shape=guide_legend(nrow=2),linetype=guide_legend(nrow=2))
+}
+knitr::opts_chunk$set(fig.width=9,fig.height=4.6,dev="pdf")
+```
+
+# Supporting experiments {-}
+
+## Design {-}
+
+Two additional experiments used 1,000 fresh replications with seed 1998. They are separate from the original 500-replication experiments and do not provide external validation. The baseline logit was $\alpha+0.8X_1-0.6X_2+0.4X_3$ for independent standard-normal predictors. The intercept was numerically selected to target 12% average true risk using a fixed reference sample of 200,000 predictor vectors. Intercept shift added 1 to the logit. Predictor-effect shift changed the $X_1$ coefficient to -0.8, with a separately selected intercept targeting 12% average risk. The nonlinear development mechanism added $0.5X_1^2$ without readjusting its intercept; covariate shift changed $X_1$ to $N(2,1)$ while preserving this mechanism. Linear fitted models omitted the quadratic term. Consequently, this supporting design differs from the original manuscript design.
+
+The first experiment used independent training, adaptation, threshold-tuning and test samples of 5,000 observations. It compared the adaptation methods described above, including density-ratio weighting capped at the source sample's 99th percentile. Thresholds maximized balanced accuracy over a grid with increments of 0.001. The sample-size experiment held training and test sizes at 5,000 and varied adaptation size across 250, 500, 1,000 and 5,000. Adaptation samples were nested within replication; methods and sample sizes shared the same test observations. The sample-size experiment excluded importance weighting and threshold adaptation. Its fixed intercepts were inherited from the first supporting experiment.
+
+## Supporting findings {-}
+
+In the first supporting experiment, intercept recalibration reduced mean log loss under intercept shift from 0.541064 to 0.474150, compared with 0.473980 after deployment refitting. Under predictor-effect shift, deployment refitting recovered mean ROC-AUC to 0.761999, compared with 0.473116 without adaptation and 0.525993 after intercept-and-slope recalibration. Under covariate shift with misspecification, deployment refitting and weighted refitting attained mean log losses of 0.377169 and 0.379179. Their paired mean difference favoured deployment refitting by 0.002011 (Monte Carlo SE 0.000076). Threshold revision increased balanced accuracy by 0.131902 under covariate shift with misspecification, compared with 0.002640 under intercept shift and 0.013295 under predictor-effect shift. The probability values were checked against the author-supplied original summary CSV and agreed at the displayed precision. The paired Monte Carlo standard error and threshold gains were also recalculated from the supplied replication-level metric records and matched the saved outputs within numerical precision.
+
+In the sample-size experiment, all recorded fits passed the implemented convergence and finite-value checks. These checks do not rule out numerical instability. Without distribution shift, updating with small samples worsened average log loss. Under intercept shift, intercept recalibration had lower mean log loss than deployment refitting at adaptation sizes of 250, 500 and 1,000. Deployment refitting had the lowest mean log loss among tested methods under predictor-effect shift and covariate shift with misspecification at all four sizes. Small method differences require direct paired comparisons. The results support matching update complexity to both the changed mechanism and the available adaptation data.
+
+
+\clearpage
+
+```{r supplementary-size-figure, fig.width=9, fig.height=6.3, fig.pos="H", fig.cap="Adaptation performance by deployment sample size in the supporting experiment. Mean test log loss across 1,000 replications, with approximate 95% Monte Carlo intervals. Panels use different vertical scales. Training and test samples each contain 5,000 observations."}
+d <- read.csv("data/sensitivity_summary.csv")
+d$Condition <- factor(d$Condition,
+ levels=c("baseline","intercept_shift","covariate_misspecification","predictor_effect_shift"),
+ labels=c("No distribution shift","Intercept shift","Covariate shift + misspecification","Predictor-effect shift"))
+d$Method <- factor(d$Method,levels=method_levels[1:4])
+ggplot(d,aes(Adaptation_n,Mean_Log_loss,colour=Method,shape=Method,linetype=Method)) +
+ geom_line(linewidth=.65) + geom_point(size=2.4) +
+ geom_errorbar(aes(ymin=Mean_Log_loss-1.96*MCSE_Log_loss,ymax=Mean_Log_loss+1.96*MCSE_Log_loss),width=0,linewidth=.4) +
+ facet_wrap(~Condition,ncol=2,scales="free_y") +
+ scale_x_log10(breaks=c(250,500,1000,5000),labels=c("250","500","1,000","5,000")) +
+ scale_colour_manual(values=plot_colours,drop=TRUE) +
+ scale_shape_manual(values=plot_shapes,drop=TRUE) +
+ scale_linetype_manual(values=plot_lines,drop=TRUE) +
+ labs(x="Adaptation sample size (log scale)",y="Mean test log loss",colour=NULL,shape=NULL,linetype=NULL) +
+ paper_theme() + guides(colour=guide_legend(nrow=2),shape=guide_legend(nrow=2),linetype=guide_legend(nrow=2))
+```
+
+
+\clearpage
+
+```{r supplementary-size-table, results="asis"}
+d <- read.csv("data/sensitivity_summary.csv")
+d <- d[d$Adaptation_n %in% c(250,5000),]
+d$Condition <- c(baseline="Baseline",covariate_misspecification="Covariate + misspecification",intercept_shift="Intercept shift",predictor_effect_shift="Predictor-effect shift")[d$Condition]
+d$Method <- sub("Intercept + slope recalibration","Intercept + slope",d$Method,fixed=TRUE)
+d$Method <- sub("Intercept recalibration","Intercept",d$Method,fixed=TRUE)
+d$Method <- sub("Deployment refit","Refit",d$Method,fixed=TRUE)
+tab <- data.frame(Condition=d$Condition,n=d$Adaptation_n,Method=d$Method,
+ `Log loss`=d$Mean_Log_loss,Brier=d$Mean_Brier,PMSE=d$Mean_PMSE,
+ `ROC-AUC`=d$Mean_ROC_AUC,check.names=FALSE)
+cat("\\begingroup\n\\small\n\\setlength{\\tabcolsep}{4pt}\n")
+print(knitr::kable(tab,format="latex",booktabs=TRUE,longtable=TRUE,digits=c(0,0,0,4,4,6,4),
+ caption="Supporting sample-size experiment: mean performance at adaptation sizes 250 and 5,000 (1,000 replications). Full summaries retain all four sample sizes."))
+cat("\\endgroup\n")
+```
+
+

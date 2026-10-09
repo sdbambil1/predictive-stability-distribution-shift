@@ -2,7 +2,7 @@
 if (!requireNamespace("renv", quietly = TRUE)) {
   stop("Install renv before capturing the project environment.")
 }
-deps <- renv::dependencies(c("manuscript", "scripts", "environment"), progress = FALSE)
+deps <- renv::dependencies(c("manuscript", "analysis", "scripts", "environment"), progress = FALSE)
 pkgs <- sort(unique(c(deps$Package, "rmarkdown", "knitr", "renv")))
 pkgs <- pkgs[!is.na(pkgs) & nzchar(pkgs)]
 missing <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]

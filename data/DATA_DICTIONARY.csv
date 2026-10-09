@@ -17,3 +17,4 @@ HasDependents,categorical predictor,Dependents indicator; encoding read from the
 LoanPurpose,categorical predictor,Loan purpose; levels read from the input file.
 HasCoSigner,categorical predictor,Co-signer indicator; encoding read from the input file.
 Default,binary outcome,"0 = nondefault, 1 = default; complete 0/1 coding required. Outcome horizon is undocumented."
+LoanToAnnualIncome,derived numeric predictor,"LoanAmount / Income when Income is finite and positive; NA otherwise. Derived by the empirical pipeline, not a required input column."

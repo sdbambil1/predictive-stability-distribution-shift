@@ -16,16 +16,19 @@ The paper combines a loan-default baseline with controlled distribution-shift ex
 
 - `manuscript/paper.pdf` - publication manuscript.
 - `manuscript/paper.Rmd` - supplied publication source.
+- `manuscript/supplementary_material.pdf` and `.Rmd` - supplied publication supplement.
 - `manuscript/references_publication_v5.bib` - bibliography required by the source.
 - `manuscript/data/` - bundled summary data and recorded environments from the revision package; no individual loan records.
 - `manuscript/verification/` - supplied checks and sensitivity notes.
-- `scripts/05_render_publication.R` - render the publication source from its bundled summary data.
+- `scripts/05_render_publication.R` and `scripts/07_render_supplement.R` - render the publication and supplement.
+- `scripts/06_adaptation_after_shift.R` - recovered original 500-replication adaptation script.
+- `verification/MANUSCRIPT_FILE_AUDIT.md` - manuscript-to-file checks, corrections, and remaining gaps.
 - `analysis/empirical_pipeline.Rmd` - earlier empirical analysis pipeline retained as supporting code, not the publication manuscript.
 - `scripts/01_render_empirical_paper.R` - rerun the supporting empirical pipeline with separately obtained row-level inputs.
 - `scripts/02_run_simulations.R` and `scripts/03_verify_against_frozen.R` - reconstructed initial simulation engine and original frozen-reference verifier; these do not rerun every later adaptation experiment.
 - `results/frozen/` - historical initial simulation reference summaries.
 - `results/empirical/` - earlier empirical outputs; see its provenance README.
-- `figures/` - extracts from the earlier project PDF, retained as supporting empirical figures; publication figures are generated within the publication source.
+- `figures/` - exact extracts of publication Figures 1-3.
 - `data/` - original input instructions, checksum, and data dictionary.
 - `environment/` - supplied session record and instructions for capturing an actual `renv.lock`.
 - `CITATION.cff` and `.zenodo.json` - citation and archive metadata.
@@ -51,3 +54,7 @@ The main empirical CSV and row-level validation file are not redistributed. An o
 ## Citation and archive
 
 See `CITATION.cff`. The existing repository license is MIT. Zenodo archival and DOI assignment remain pending; no verified DOI is available yet.
+
+## File consistency audit
+
+See [the audit report](verification/MANUSCRIPT_FILE_AUDIT.md). The principal empirical and adaptation values match the publication manuscript. The deposit remains partial: full supporting scripts/raw records and an actual renv lockfile are not all present. The manuscript availability text also predates this upload and needs updating before final archival.

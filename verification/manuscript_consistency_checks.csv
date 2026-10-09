@@ -1,0 +1,27 @@
+Check,Maximum_absolute_error,Tolerance,Pass
+Adaptation mean log_loss,4.996003610813204e-16,1e-11,True
+Adaptation MCSE log_loss,9.746977530644685e-17,1e-11,True
+Adaptation mean brier,4.85722573273506e-16,1e-11,True
+Adaptation MCSE brier,9.925870889104793e-17,1e-11,True
+Adaptation mean auc,5.551115123125783e-16,1e-11,True
+Adaptation MCSE auc,9.855397747893235e-17,1e-11,True
+Adaptation mean cal_intercept,9.947598300641403e-14,1e-11,True
+Adaptation MCSE cal_intercept,1.2079226507921703e-13,1e-11,True
+Adaptation mean cal_slope,2.842170943040401e-14,1e-11,True
+Adaptation MCSE cal_slope,1.7763568394002505e-14,1e-11,True
+Probability replication count 500,0.0,1e-11,True
+Probability duplicate replication keys,0.0,1e-11,True
+Threshold mean baseline_threshold,0.0,1e-11,True
+Threshold mean adapted_threshold,5.551115123125783e-17,1e-11,True
+Threshold mean threshold_change,1.0075626314179353e-16,1e-11,True
+Threshold mean frozen_BA,5.551115123125783e-16,1e-11,True
+Threshold mean adapted_BA,4.440892098500626e-16,1e-11,True
+Threshold mean BA_gain,9.75781955236954e-17,1e-11,True
+Threshold MCSE gain,9.356664748549903e-17,1e-11,True
+Manuscript endpoint covariate_misspecified none,1.570735944200763e-05,5e-05,True
+Manuscript endpoint covariate_misspecified deployment_refit,4.4735072786961094e-05,5e-05,True
+Manuscript endpoint intercept_shift intercept_recal,4.759360909001309e-05,5e-05,True
+Manuscript endpoint slope_shift intercept_slope_recal,3.208074807892203e-05,5e-05,True
+Manuscript endpoint slope_shift deployment_refit,1.5611095119938412e-06,5e-05,True
+Saved verification failures supporting_summary_checks.csv,0.0,1e-11,True
+Saved verification failures sensitivity_summary_checks.csv,0.0,1e-11,True
