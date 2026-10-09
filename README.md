@@ -5,13 +5,12 @@
 
 Author: Silas Bambil
 
-This repository accompanies the frozen project manuscript and includes a research poster.
+This repository accompanies the frozen project manuscript.
 
 ## What is included
 
 - `manuscript/paper.Rmd` — frozen executable manuscript source.
 - `manuscript/paper.pdf` — frozen manuscript PDF.
-- `poster/Silas_Bambil_Research_Poster.pdf` — research poster (October 5, 2026).
 - `scripts/01_render_empirical_paper.R` — renders the empirical paper from the source data.
 - `scripts/02_run_simulations.R` — full reconstructed Monte Carlo engine.
 - `scripts/03_verify_against_frozen.R` — checks rerun simulation summaries against the frozen manuscript results.
