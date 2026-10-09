@@ -16,7 +16,7 @@ if (!file.exists(stress_data)) {
 }
 
 rmarkdown::render(
-  input = file.path("manuscript", "paper.Rmd"),
+  input = file.path("analysis", "empirical_pipeline.Rmd"),
   output_file = "paper_reproduced.pdf",
   params = list(
     data_path = normalizePath(main_data),

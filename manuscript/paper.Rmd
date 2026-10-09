@@ -1,20 +1,34 @@
 ---
-title: "Predictive Stability Under Distribution Shift: Calibration, Discrimination, and Decision Thresholds with a Loan-Default Application"
+title: "Predictive Stability and Adaptation Under Distribution Shift: Calibration, Discrimination, and Decision Thresholds in Credit-Risk Modeling"
 author: "Silas Bambil"
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
+date: "2026"
 output:
   pdf_document:
-    toc: true
-    toc_depth: 2
+    toc: false
     number_sections: true
     fig_caption: true
     latex_engine: xelatex
 fontsize: 11pt
 geometry: margin=0.9in
-colorlinks: true
-linkcolor: black
-citecolor: black
-urlcolor: blue
+bibliography: references_publication_v5.bib
+link-citations: true
+references:
+  - id: davis2019updating
+    type: article-journal
+    title: A nonparametric updating method to correct clinical prediction model drift
+    author:
+      - {family: Davis, given: Sharon E.}
+      - {family: Greevy, given: Robert A.}
+      - {family: Fonnesbeck, given: Christopher}
+      - {family: Lasko, given: Thomas A.}
+      - {family: Walsh, given: Colin G.}
+      - {family: Matheny, given: Michael E.}
+    container-title: Journal of the American Medical Informatics Association
+    volume: 26
+    issue: 12
+    page: 1448-1457
+    issued: {date-parts: [[2019]]}
+    DOI: 10.1093/jamia/ocz127
 header-includes:
   - \usepackage{xurl}
   - \usepackage{microtype}
@@ -24,1156 +38,238 @@ header-includes:
   - \usepackage{float}
   - \usepackage{placeins}
   - \usepackage{adjustbox}
-  - \usepackage{etoolbox}
   - \usepackage{caption}
-  - \captionsetup{font=small,labelfont=bf,justification=centering,singlelinecheck=false}
-  - \renewcommand{\contentsname}{Table of Contents}
-  - \setlength{\tabcolsep}{4pt}
-  - \renewcommand{\arraystretch}{1.12}
-  - \AtBeginEnvironment{tabular}{\small}
-  - \AtBeginEnvironment{longtable}{\small}
-  - \BeforeBeginEnvironment{tabular}{\begin{adjustbox}{max width=\textwidth}}
-  - \AfterEndEnvironment{tabular}{\end{adjustbox}}
-  - \makeatletter
-  - \def\fps@table{!htbp}
-  - \def\fps@figure{!htbp}
-  - \makeatother
-  - \setlength{\parskip}{0.45em}
-  - \setlength{\parindent}{0pt}
-params:
-  data_path: "Loan_default.csv"
-  validation_path: "New_Loan_Validation_Data.csv"
-  output_dir: "stat8670_loan_outputs"
-  force_retrain: false
-  include_neural: false
-  threshold_objective: "balanced_accuracy"
-  bootstrap_reps: 300
-  seed: 42
-  simulation_seed: 1998
-  simulation_reps: 500
+  - \usepackage{needspace}
+  - \captionsetup{font=small,labelfont=bf}
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = FALSE,
-  message = FALSE,
   warning = FALSE,
-  error = FALSE,
-  fig.width = 6.8,
-  fig.height = 4.4,
+  message = FALSE,
   fig.align = "center",
-  fig.pos = "!htbp",
-  cache = FALSE
+  out.width = "100%"
 )
 
-options(
-  scipen = 999,
-  verbose = FALSE
-)
-
-required <- c(
-  "knitr","ggplot2","dplyr","tidyr","recipes",
-  "yardstick","ranger","glmnet","gbm"
-)
-
-missing <- required[!vapply(required, requireNamespace, logical(1), quietly = TRUE)]
-
-if (length(missing)) {
-  stop(
-    "Install required packages first with: install.packages(c(",
-    paste(sprintf('"%s"', missing), collapse = ", "),
-    "))"
-  )
-}
-
-library(knitr)
+publication_dir <- "data"
 library(ggplot2)
-library(dplyr)
-library(tidyr)
-
-theme_set(theme_minimal(base_size = 11))
-
-# Consistent publication-style LaTeX tables.  The LaTeX preamble above
-# automatically shrinks wide tabular objects to the text width without
-# enlarging smaller tables.
-paper_kable <- function(x, ..., caption = NULL, digits = NULL, align = NULL, row.names = FALSE) {
-  args <- list(
-    x = x,
-    format = "latex",
-    booktabs = TRUE,
-    caption = caption,
-    row.names = row.names
-  )
-
-  # knitr::kable() cannot safely receive digits = NULL or align = NULL
-  # for every data-frame type. Add these arguments only when supplied.
-  if (!is.null(digits)) args$digits <- digits
-  if (!is.null(align)) args$align <- align
-
-  extra_args <- list(...)
-  args <- c(args, extra_args)
-
-  do.call(knitr::kable, args)
+method_labels <- c(none="No adaptation", intercept_recal="Intercept recalibration",
+ intercept_slope_recal="Intercept + slope recalibration",
+ importance_weighted_refit="Importance-weighted refit", deployment_refit="Deployment refit")
+method_levels <- c("No adaptation", "Intercept recalibration",
+ "Intercept + slope recalibration", "Deployment refit", "Importance-weighted refit")
+plot_colours <- setNames(c("#555555", "#0072B2", "#009E73", "#D55E00", "#CC79A7"), method_levels)
+plot_shapes <- setNames(c(1,17,15,16,3), method_levels)
+plot_lines <- setNames(c("dashed","solid","dotdash","solid","dotted"), method_levels)
+shift_labels <- c(covariate_misspecified="Covariate shift + misspecification",
+ intercept_shift="Intercept shift", slope_shift="Predictor-effect shift")
+style_scales <- function() list(
+ scale_colour_manual(values=plot_colours, drop=FALSE),
+ scale_shape_manual(values=plot_shapes, drop=FALSE),
+ scale_linetype_manual(values=plot_lines, drop=FALSE))
+paper_theme <- function() theme_bw(base_size=12) + theme(
+ legend.position="bottom", panel.grid.minor=element_blank(),
+ strip.background=element_rect(fill="#EEEEEE"), strip.text=element_text(face="bold",size=10),
+ plot.title=element_text(face="bold"), plot.caption=element_text(hjust=0,size=10),
+ legend.text=element_text(size=10),
+ plot.margin=margin(10,12,10,12))
+probability <- read.csv("data/adaptation_probability_summary.csv")
+probability$Method <- factor(unname(method_labels[probability$method]), levels=method_levels)
+probability$Condition <- factor(probability$shift_type, levels=names(shift_labels), labels=unname(shift_labels))
+plot_probability <- function(metric, se, ylab) {
+ d <- probability
+ d$value <- d[[metric]]; d$lower <- d$value-1.96*d[[se]]; d$upper <- d$value+1.96*d[[se]]
+ ggplot(d,aes(shift_value,value,colour=Method,shape=Method,linetype=Method)) +
+ geom_line(linewidth=.65) + geom_errorbar(aes(ymin=lower,ymax=upper),width=0,linewidth=.35) +
+ geom_point(size=2) + facet_wrap(~Condition,ncol=3,scales="free_x") + style_scales() +
+ labs(x="Magnitude of distribution shift",y=ylab,colour=NULL,shape=NULL,linetype=NULL,
+ caption="Bars: approximate 95% Monte Carlo intervals; 500 replications per condition.") +
+ paper_theme() + guides(colour=guide_legend(nrow=2),shape=guide_legend(nrow=2),linetype=guide_legend(nrow=2))
 }
-
-dir.create(params$output_dir, recursive = TRUE, showWarnings = FALSE)
+knitr::opts_chunk$set(fig.width=9,fig.height=4.6,dev="pdf")
 ```
-
-
-\clearpage
 
 # Abstract {-}
 
-A probability model can perform well during internal validation yet behave differently when the population in which it is deployed differs from the population in which it was developed. This study investigates that problem through a unified empirical and simulation analysis of loan-default prediction. The empirical component uses 255,347 loan records with 29,653 recorded defaults (approximately 11.6%) to establish a probability model, assess calibration, and select an operating threshold. Logistic regression, ridge logistic regression, random forest, and gradient boosting are compared using validation log loss as the primary probability-quality criterion. Raw logistic regression achieved the lowest validation log loss and, on the locked test set, achieved ROC-AUC 0.7585, PR-AUC 0.3288, Brier score 0.09085, and log loss 0.31111. A validation-selected balanced-accuracy threshold of 0.1175 produced held-out recall of 68.4% and specificity of 70.1%.
+Probability models are commonly validated on held-out observations drawn from the same underlying environment as the development data, yet deployment populations may differ in ways that affect probability accuracy, calibration, discrimination, and decision rules differently. This study examines those distinctions using an empirical loan-default application and controlled Monte Carlo experiments. The empirical analysis uses 255,347 loan records with 29,653 recorded defaults (11.6%) to establish an internally validated probability model. Raw logistic regression achieved the lowest validation log loss among the candidate models and obtained test ROC-AUC 0.7585, PR-AUC 0.3288, Brier score 0.0908, and log loss 0.3111.
 
-The central research question is whether those statistical properties remain stable when the deployment distribution changes. Because the empirical data do not contain documented temporal cohorts or an independent deployment population, controlled Monte Carlo experiments are used to isolate covariate shift, intercept changes in the conditional outcome mechanism, and changes in predictor effects. Across 500 replications per condition, pure covariate shift produced little excess probability error when the conditional logistic model was correctly specified, whereas covariate shift combined with omitted nonlinear structure produced substantial calibration and probability deterioration. Under intercept outcome shift, calibration changed markedly while model ranking remained close to the oracle. Under slope outcome shift, the original model's ROC-AUC declined from approximately 0.762 to 0.473 as the predictor--outcome relationship reversed, while the oracle remained informative. Decision-threshold experiments also showed that the balanced-accuracy-optimal threshold can change substantially after population shift even when the conditional probability model remains correctly specified.
+Controlled experiments then isolate three forms of distributional change: covariate shift combined with model misspecification, an intercept change in the conditional outcome mechanism, and a change in a predictor effect. Across 500 Monte Carlo replications per condition, these mechanisms produce qualitatively different failure patterns. A second set of experiments evaluates adaptation through intercept recalibration, intercept-and-slope recalibration, importance-weighted refitting where applicable, deployment refitting, and decision-threshold revision. Under intercept shift, simple recalibration nearly restores probability performance. Under covariate shift with misspecification, recalibration improves performance but refitting provides greater repair. Under severe predictor-effect shift, score recalibration improves some probability metrics but cannot reconstruct the changed multivariable relationship; deployment refitting restores discrimination substantially more effectively. Threshold revision can materially improve decision performance even when it does not repair the probability model itself.
 
-The results show that discrimination, calibration, probability accuracy, and decision-threshold stability are distinct properties of a predictive system. Internal predictive performance should therefore not be interpreted as evidence of deployment stability without temporal or external validation. Because the recorded `Default` label has no documented observation horizon, the empirical estimates are interpreted as risk of the recorded outcome rather than formal 12-month or lifetime probabilities of default.
+The results support a failure-response view of model maintenance: the appropriate intervention depends on which component of the predictive system has become unstable. Stable discrimination does not guarantee stable probabilities, and recalibrating probabilities does not necessarily restore ranking or decision performance.
 
-**Keywords:** loan default; distribution shift; covariate shift; logistic regression; probability calibration; model misspecification; decision threshold; Monte Carlo simulation
+**Keywords:** distribution shift; probability calibration; discrimination; decision thresholds; model adaptation; credit risk; Monte Carlo simulation
 
-\FloatBarrier
-\clearpage
 
 # Introduction
 
-Loan-default prediction is fundamentally a problem of statistical prediction under uncertainty. A fitted model estimates the probability that a borrower experiences a recorded default outcome,
+A probability model can perform well during internal validation and still behave differently after deployment. Dataset shift is the general setting in which the joint distribution of predictors and outcomes differs between development and use [@quinonero2009]. The practical difficulty is not merely that aggregate performance may deteriorate. Different properties of the predictive system may change in different ways: ranking may remain useful while absolute probabilities become biased, or probability estimates may remain informative while a threshold selected in the development population becomes inappropriate.
+
+Let \(P(X,Y)\) denote the development distribution and \(Q(X,Y)\) the deployment distribution. The factorization
 
 \[
-p_i=P(Y_i=1\mid X_i),
+P(X,Y)=P(Y\mid X)P(X)
 \]
 
-and a later decision rule may convert the estimated probability \(\widehat p_i\) into an operational action. The statistical validity of that system therefore depends on more than whether the model can classify observations correctly. The estimated probabilities should be appropriately calibrated, the model should rank higher-risk observations above lower-risk observations, and the operating threshold should remain appropriate for the population in which the model is used.
+separates changes in the predictor population from changes in the conditional outcome mechanism. This distinction is central to the present study because the statistical consequences of a change in \(P(X)\) need not resemble those of a change in \(P(Y\mid X)\).
 
-These properties are usually evaluated using held-out observations drawn from the same underlying source as the development data. That design is useful for internal validation but leaves an important question unresolved: **what happens when the deployment population no longer follows the same distribution as the development population?** Changes in borrower characteristics, underwriting practices, macroeconomic conditions, product mix, or the relationship between predictors and default can alter the statistical environment in which a model operates.
+Credit-risk modeling provides a natural application. Predicted probabilities of default are used to support risk assessment and threshold-based decisions, while the underlying borrower population, economic environment, and predictor--outcome relationships can evolve over time. Prior credit-scoring research has documented the practical importance of population and concept drift and has proposed dynamic or locally adaptive modeling approaches [@sousa2016; @nikolaidis2022]. Recent work has continued this direction by explicitly studying discrimination and calibration of credit-risk models under multiple forms of data drift [@peng2026].
 
-This distinction can be written formally. Let \(P(X,Y)\) denote the development joint distribution and \(Q(X,Y)\) the deployment joint distribution. Distribution shift occurs when
+The empirical loan data in this study are used to establish an internally validated baseline rather than to claim observed deployment drift. The subsequent Monte Carlo experiments deliberately perturb a known data-generating process so that the consequences of covariate shift, baseline-risk shift, and predictor-effect shift can be isolated. A second simulation layer evaluates interventions that act on different components of the predictive system.
+
+The study makes three contributions. First, it compares how distinct shift mechanisms affect probability accuracy, calibration, discrimination, and decision-threshold stability. Second, it evaluates recalibration, importance-weighted refitting, deployment refitting, and threshold revision under the same controlled conditions. Third, it links the resulting failure patterns to a mechanism-based response framework that distinguishes probability-model repair, ranking repair, and decision-rule repair.
+
+The central question is therefore:
+
+\[
+\boxed{\text{Which intervention repairs which type of predictive failure?}}
+\]
+
+# Literature Review
+
+## Distribution shift and predictive stability
+
+The general problem of dataset shift arises when the distribution generating deployment observations differs from the distribution used for model development [@quinonero2009]. A useful decomposition distinguishes changes in the covariate distribution from changes in the conditional outcome mechanism. Under covariate shift, the marginal distribution of predictors changes while the conditional relationship \(P(Y\mid X)\) remains stable. Shimodaira [-@shimodaira2000] showed that density-ratio weighting can target predictive inference toward a shifted covariate distribution, with particular relevance when the fitted model is misspecified.
+
+This distinction is important because observed predictive performance depends jointly on the conditional model and the population in which it is evaluated. Changes in case mix can alter discrimination even when the conditional relationship remains valid [@debray2015]. Consequently, a change in ROC-AUC is not by itself sufficient evidence that the underlying probability model has become structurally incorrect. Modern guidance on prediction-model evaluation likewise emphasizes assessment in representative target populations and separation of development performance from performance in new settings [@collins2024].
+
+## Calibration, discrimination, and model updating
+
+Calibration and discrimination describe different properties of a probability model. Discrimination concerns ordering: whether observations with events tend to receive higher scores than observations without events. Calibration concerns the numerical agreement between predicted probabilities and observed outcome frequencies [@steyerberg2010; @vancalster2019]. A model can therefore retain useful discrimination while systematically underpredicting or overpredicting absolute risk.
+
+Model updating provides a hierarchy of responses to such failures. Intercept-only recalibration changes the baseline level of risk while preserving relative predictor effects. Intercept-and-slope recalibration additionally rescales the existing linear predictor. More structural updating re-estimates predictor coefficients or rebuilds the model [@steyerberg2004]. Calibration methods can improve probability estimates without necessarily adding information to the original score [@niculescu2005]. This hierarchy motivates asking whether the complexity of an adaptation strategy should match the component of the data-generating mechanism that has changed.
+
+For imbalanced binary outcomes, evaluation also benefits from metrics beyond ROC-AUC. Precision-recall summaries emphasize performance on the event class and can reveal behavior that ROC summaries obscure [@davis2006]. Probability-oriented measures such as log loss and the Brier score complement ranking metrics because they respond directly to the quality of the predicted probabilities.
+
+## Distribution shift in credit-risk prediction
+
+Credit-risk prediction has traditionally emphasized discrimination and classification performance, with both statistical and machine-learning approaches widely studied [@bazzana2024]. However, credit portfolios are inherently non-stationary. Sousa, Gama, and Brandão [-@sousa2016] proposed a dynamic credit-risk framework based on sequential learning from changing populations and showed that static historical models can lose effectiveness as the environment changes. Nikolaidis and Doumpos [-@nikolaidis2022] studied drift adaptation in behavioral credit scoring using an 11-year proprietary credit-bureau dataset and reported that locally adaptive models can outperform corresponding global models under population drift.
+
+More recent work has made drift itself a central credit-risk modeling problem. Peng and Lessmann [-@peng2026] study mortgage default prediction under three concept-drift regimes---sudden, incremental, and recurring---while also manipulating label prevalence, and evaluate both discrimination and calibration in a dynamic survival framework. These studies reinforce the practical importance of non-stationarity, but they primarily focus on developing or comparing adaptive predictive methods.
+
+## Comparison with related studies
+
+The relationship between distribution shift and model updating has been studied previously. Davis and colleagues evaluated changes in outcome prevalence, case mix and predictor--outcome associations, comparing intercept correction, logistic recalibration and refitting. Their study developed a bootstrap procedure to recommend update complexity, examined different development and updating sample sizes, and included temporal clinical applications [@davis2019updating]. Thus, the benefits of simple recalibration under some risk-level changes and structural updating under changed predictor effects are established findings.
+
+The present study provides a complementary credit-risk-motivated comparison using specified simulation conditions. An omitted quadratic term makes the interaction between population shift and model approximation error explicit. Density-ratio weighting is compared with recalibration and deployment refitting, while known conditional probabilities permit direct probability-error assessment. Threshold revision is evaluated separately from probability-model updating. These features describe the experiments performed here, rather than establishing that their individual principles are new. The study does not develop an automatic update-selection procedure or validate its descriptive framework on external credit populations.
+
+# Statistical Framework
+
+
+## Distribution shift
+
+Development and deployment environments are represented by \(P(X,Y)\) and \(Q(X,Y)\), respectively [@quinonero2009]. Distribution shift occurs when
 
 \[
 P(X,Y)\neq Q(X,Y).
 \]
 
-The consequences depend on which part of the joint distribution changes. Under covariate shift,
+Under covariate shift,
 
 \[
-P(X)\neq Q(X),
-\qquad
-P(Y\mid X)=Q(Y\mid X),
+P(X)\neq Q(X), \qquad P(Y\mid X)=Q(Y\mid X).
 \]
 
-whereas a change in the conditional outcome mechanism occurs when
+A correctly specified conditional model can remain valid under this change, although finite-sample estimation error may become more consequential in regions poorly represented during development. If the fitted model is misspecified, shifting probability mass toward regions where the approximation is poor can substantially increase predictive error; density-ratio weighting is one established approach for targeting the deployment covariate distribution [@shimodaira2000].
+
+Outcome-mechanism shift instead satisfies
 
 \[
 P(Y\mid X)\neq Q(Y\mid X).
 \]
 
-These mechanisms need not affect a predictive model in the same way. A model may preserve ranking while losing calibration, remain probabilistically accurate while its operating threshold changes, or lose discrimination when predictor--outcome relationships themselves change.
+An intercept change in a logistic model changes baseline risk while preserving predictor slopes. A predictor-effect change alters the relationship between at least one predictor and the outcome and can therefore change the ranking induced by the original score.
 
-The loan-default application in this paper provides an empirical baseline for studying these questions. The dataset contains a minority default outcome, making overall accuracy alone unsuitable for model assessment. Candidate probability models are compared using validation log loss, the selected model is assessed for discrimination and calibration, and a review threshold is selected independently using balanced accuracy. The empirical analysis therefore establishes the predictive system whose components are of interest: probability estimation, calibration, ranking, and threshold-based decision performance.
+## Predictive properties
 
-The empirical data, however, contain no documented temporal cohorts or genuinely independent deployment population. They cannot directly reveal how those components would respond to future population change. Controlled Monte Carlo simulation is therefore used as the second methodological component of the same study. The simulations hold some parts of the data-generating process fixed while deliberately changing others, allowing the effects of different forms of distribution shift to be isolated.
-
-The study addresses five related questions:
-
-1. **What level of internal probability performance, discrimination, and calibration is achieved by the empirical loan-default model selected under a prespecified validation criterion?**
-2. **Under covariate shift, when does a fitted probability model remain stable, and when does model misspecification become increasingly consequential?**
-3. **Can discrimination remain stable or improve while probability calibration deteriorates?**
-4. **How does changing a predictor--outcome relationship affect discrimination and calibration when event prevalence is held approximately constant?**
-5. **Can a decision threshold selected in the development population become inappropriate after population shift even when the underlying probability model remains useful?**
-
-The contribution is not a claim that one algorithm is universally superior for credit risk, nor is the simulation intended to establish that a particular form of shift has occurred in the observed loan data. Instead, the paper uses a real prediction problem and controlled statistical experiments to study a broader question: **which properties of a probability-based predictive system remain stable under distributional change, and which must be reassessed?**
-
-\FloatBarrier
-\clearpage
-
-# Literature Review and Statistical Background
-
-## Traditional and machine-learning credit scoring
-
-Logistic regression remains a natural benchmark for binary credit outcomes because it models a conditional probability through the log-odds scale and produces interpretable coefficients. At the same time, contemporary credit-scoring research increasingly evaluates random forests, boosting, neural networks, and hybrid approaches that can represent nonlinear effects and higher-order interactions. Montevechi et al. (2024) review machine learning in consumer credit-risk modelling and emphasize both its potential and the need for standardized modelling procedures and interpretability. Ayari, Guetari, and Kraïem (2026), reviewing recent financial credit-scoring research, similarly identify predictive performance, dimensionality, interpretability, bias, and deployment complexity as recurring issues.
-
-The existence of more flexible algorithms does not imply that they must outperform logistic regression in every dataset. Bazzana, Bee, and Hussin Adam Khatir (2024), for example, report that machine-learning methods produced only modest gains over logistic regression in their default-prediction application and argue that these gains must be weighed against implementation and interpretation costs. That observation motivates the validation-based comparison used here: complexity is treated as a candidate capability, not as evidence of superiority.
-
-## Class imbalance and threshold selection
-
-In an imbalanced credit portfolio, a 0.50 cutoff is not automatically appropriate. Bazzana, Bee, and Hussin Adam Khatir (2024) explicitly discuss threshold adjustment for default prediction because sensitivity and specificity cannot generally be maximized simultaneously. The statistical-learning principles make the same conceptual point more generally: fitting the conditional probability and choosing the final classification threshold are separate operations, and a different threshold can be justified when the consequences of the two types of classification error differ.
-
-This paper uses balanced accuracy as the default threshold objective because verified monetary costs of false negatives and false positives are not available. Balanced accuracy gives equal weight to sensitivity and specificity. It is therefore a statistical operating objective, not a claim of economic optimality. The analysis also reports alternative validation-selected thresholds for F1, F2, and Youden's \(J\) so that the consequences of changing the objective are visible.
-
-## Probability quality, calibration, and discrimination
-
-Binary risk models should be evaluated along more than one dimension. Steyerberg et al. (2010) emphasize that discrimination, calibration, and overall predictive performance answer different questions. ROC-AUC measures ranking ability across thresholds, while precision-recall performance is especially informative when the positive class is less common. The Brier score summarizes squared probability error, and log loss penalizes probability assignments through the negative Bernoulli log-likelihood.
-
-Calibration asks whether predicted probabilities correspond to observed frequencies. Niculescu-Mizil and Caruana (2005) showed that different learning algorithms can produce systematically distorted probability scales and studied post-hoc methods including Platt scaling. Accordingly, this study does not assume that calibration must improve a model; raw and Platt-calibrated probabilities are compared on held-out validation data.
-
-
-## Distribution shift and predictive stability
-
-Internal validation estimates performance under the observed development environment. Deployment can violate that environment when the joint distribution of predictors and outcomes changes. Under covariate shift, the marginal predictor distribution changes while the conditional outcome mechanism remains invariant. In principle, a correctly specified conditional model can remain valid under such a shift because \(P(Y\mid X)\) is unchanged. Under misspecification, however, the approximation learned in the development population can become less accurate when deployment places more probability mass in regions where the approximation is poor (Shimodaira, 2000; Quiñonero-Candela et al., 2009; Wen, Yu, and Greiner, 2014).
-
-A change in \(P(Y\mid X)\) represents a different problem. An intercept change in a logistic outcome mechanism can alter absolute risk while preserving much of the ranking induced by the original linear predictor. A change in predictor slopes can alter the ranking itself. These distinctions motivate separate assessment of discrimination, calibration, probability loss, and threshold performance rather than relying on a single metric such as ROC-AUC.
-
-## Fairness, interpretability, and responsible use
-
-Credit scoring is a high-consequence application in which predictive performance is not the only consideration. Kozodoi, Jacob, and Lessmann (2022) show that fairness criteria can interact with profitability and model design, while Das, Stanton, and Wallace (2023) review algorithmic fairness with particular attention to credit scoring. These studies motivate the subgroup diagnostics reported later in this paper. The available dataset does not contain the full set of attributes needed for a complete fairness audit, so the subgroup analysis is descriptive and should not be interpreted as establishing that the model is fair.
-
-
-\FloatBarrier
-\clearpage
-
-# Statistical and Computational Framework
-
-The analysis treats a predictive system as a sequence of connected but distinct statistical components:
+For binary outcomes \(Y_i\in\{0,1\}\) and predicted probabilities \(\hat p_i\), log loss is
 
 \[
-\boxed{
-\text{Probability model}
-\rightarrow
-\text{Calibration}
-\rightarrow
-\text{Ranking}
-\rightarrow
-\text{Decision threshold}
-\rightarrow
-\text{Deployment stability}
-}
-\]
-
-The empirical analysis estimates and evaluates the first four components under internal validation. The simulation analysis then studies the fifth component by changing the deployment data-generating mechanism while monitoring the same probability, calibration, ranking, and threshold quantities.
-
-The statistical organization follows the factorization
-
-\[
-P(X,Y)=P(Y\mid X)P(X).
-\]
-
-This decomposition separates changes in the population of predictors from changes in the conditional outcome mechanism. The simulation experiments are therefore not separate applications: they are controlled perturbations of the same joint distribution underlying the empirical prediction problem. Covariate shift changes \(P(X)\) while holding \(P(Y\mid X)\) fixed; the outcome-shift experiments change \(P(Y\mid X)\). For each perturbation, the analysis asks how four observable properties respond:
-
-\[
-\boxed{
-\text{probability accuracy},\quad
-\text{calibration},\quad
-\text{discrimination},\quad
-\text{decision-rule stability}.
-}
-\]
-
-
-The analysis is organized around the progression
-
-\[
-\text{statistical question}
-\longrightarrow
-\text{representation}
-\longrightarrow
-\text{model}
-\longrightarrow
-\text{objective/loss}
-\longrightarrow
-\text{computation}
-\longrightarrow
-\text{validation}
-\longrightarrow
-\text{decision}.
-\]
-
-Five principles guide the implementation:
-
-1. **Representation matters.** Raw predictors must be converted into a numerical representation appropriate to the model.
-2. **Loss defines the optimization target.** Logistic regression maximizes Bernoulli likelihood, while validation log loss evaluates probability quality on observations not used to estimate the model.
-3. **Computation should be stable and reproducible.** Scaling and training-only preprocessing are used to avoid unnecessary numerical and leakage problems.
-4. **Flexible models require validation.** Additional complexity is retained only when it improves held-out evidence.
-5. **Probability fitting and classification are separate.** The threshold is optimized only after the probability model has been selected.
-
-Decision objectives are evaluated over a grid and visualized so that the resulting trade-offs remain transparent.
-
-
-\FloatBarrier
-\clearpage
-
-# Data
-
-```{r read-data}
-loans <- read.csv(
-  params$data_path,
-  stringsAsFactors = FALSE,
-  check.names = FALSE
-)
-
-required_columns <- c(
-  "LoanID","Age","Income","LoanAmount","CreditScore","MonthsEmployed",
-  "NumCreditLines","InterestRate","LoanTerm","DTIRatio","Education",
-  "EmploymentType","MaritalStatus","HasMortgage","HasDependents",
-  "LoanPurpose","HasCoSigner","Default"
-)
-
-missing_columns <- setdiff(required_columns, names(loans))
-
-if (length(missing_columns)) {
-  stop("Missing columns: ", paste(missing_columns, collapse = ", "))
-}
-
-if (anyNA(loans$LoanID) || anyDuplicated(loans$LoanID)) {
-  stop("LoanID must be complete and unique.")
-}
-
-loans$Default <- as.integer(loans$Default)
-
-if (anyNA(loans$Default) || !all(loans$Default %in% c(0,1))) {
-  stop("Default must be coded 0/1 with no missing values.")
-}
-
-overview <- data.frame(
-  Loans = nrow(loans),
-  Predictors = length(required_columns) - 2,
-  Defaults = sum(loans$Default),
-  DefaultRate = mean(loans$Default),
-  MissingCells = sum(is.na(loans))
-)
-
-overview_display <- overview
-overview_display$DefaultRate <- sprintf("%.2f%%", 100 * overview_display$DefaultRate)
-
-paper_kable(
-  overview_display,
-  caption = "Dataset overview."
-)
-```
-
-`LoanID` is an identifier and is not used as a predictor.
-
-The study data are tabular loan-level observations. There is no observed repayment sequence, default date, recovery history, or time-varying balance. Therefore, recurrent or sequence models are not appropriate representations of the information available here.
-
-```{r class-balance}
-class_df <- data.frame(
-  Outcome = c("Non-default","Default"),
-  Count = c(sum(loans$Default == 0), sum(loans$Default == 1))
-)
-
-ggplot(class_df, aes(x = Outcome, y = Count)) +
-  geom_col(width = 0.65) +
-  labs(
-    title = "Observed Class Balance",
-    x = NULL,
-    y = "Number of loans"
-  )
-```
-
-Because default is the minority outcome, raw accuracy can be misleading. Probability loss, ranking metrics, calibration, recall, precision, specificity, and review rate are examined instead.
-
-## Predictor Construction
-
-```{r predictor-setup}
-numeric_features <- c(
-  "Age","Income","LoanAmount","CreditScore","MonthsEmployed",
-  "NumCreditLines","InterestRate","LoanTerm","DTIRatio"
-)
-
-categorical_features <- c(
-  "Education","EmploymentType","MaritalStatus","HasMortgage",
-  "HasDependents","LoanPurpose","HasCoSigner"
-)
-
-base_features <- c(numeric_features, categorical_features)
-
-prepare_inputs <- function(d, include_age = TRUE) {
-  x <- d[, base_features, drop = FALSE]
-
-  for (nm in numeric_features) {
-    x[[nm]] <- suppressWarnings(as.numeric(as.character(x[[nm]])))
-  }
-
-  for (nm in categorical_features) {
-    x[[nm]] <- trimws(as.character(x[[nm]]))
-    x[[nm]][x[[nm]] == ""] <- NA_character_
-  }
-
-  x$LoanToAnnualIncome <- ifelse(
-    is.finite(x$Income) & x$Income > 0,
-    x$LoanAmount / x$Income,
-    NA_real_
-  )
-
-  if (!include_age) {
-    x$Age <- NULL
-  }
-
-  x
-}
-
-X_raw <- prepare_inputs(loans)
-y <- loans$Default
-```
-
-The engineered ratio
-
-\[
-\text{LoanToAnnualIncome}
-=
-\frac{\text{LoanAmount}}{\text{Income}}
-\]
-
-captures loan size relative to annual income. It is derived only from variables already present in the data.
-
-
-\FloatBarrier
-\clearpage
-
-# Methods
-
-## Development Design
-
-The analysis uses four non-overlapping partitions:
-
-- **60% training:** fit preprocessing and model parameters;
-- **15% calibration:** fit optional probability calibration;
-- **10% validation:** select the probability model and the threshold rule;
-- **15% test:** final evaluation after choices are locked.
-
-```{r split-functions}
-stratified_four_way_split <- function(y, seed = 42) {
-  set.seed(seed)
-
-  parts <- list(
-    train = integer(),
-    calibration = integer(),
-    validation = integer(),
-    test = integer()
-  )
-
-  for (cls in sort(unique(y))) {
-    ids <- sample(which(y == cls))
-    n <- length(ids)
-
-    n_train <- floor(0.60 * n)
-    n_cal <- floor(0.15 * n)
-    n_val <- floor(0.10 * n)
-
-    parts$train <- c(parts$train, ids[seq_len(n_train)])
-    parts$calibration <- c(
-      parts$calibration,
-      ids[(n_train + 1):(n_train + n_cal)]
-    )
-    parts$validation <- c(
-      parts$validation,
-      ids[(n_train + n_cal + 1):(n_train + n_cal + n_val)]
-    )
-    parts$test <- c(
-      parts$test,
-      ids[(n_train + n_cal + n_val + 1):n]
-    )
-  }
-
-  lapply(parts, sort)
-}
-
-ids <- stratified_four_way_split(y, params$seed)
-
-split_table <- data.frame(
-  Subset = names(ids),
-  Loans = vapply(ids, length, integer(1)),
-  DefaultRate = vapply(ids, function(i) mean(y[i]), numeric(1))
-)
-
-split_table$DefaultRate <- sprintf("%.2f%%", 100 * split_table$DefaultRate)
-
-paper_kable(
-  split_table,
-  caption = "Development partitions."
-)
-```
-
-This design assumes each row is an independent loan. If repeated borrower IDs or origination dates become available, a borrower-grouped or out-of-time design would be preferable.
-
-## Leakage-Safe Preprocessing
-
-Preprocessing is learned **only on the training subset**.
-
-```{r preprocessing}
-fit_recipe <- function(training_x) {
-  recipes::recipe(~ ., data = training_x) |>
-    recipes::step_impute_median(recipes::all_numeric_predictors()) |>
-    recipes::step_unknown(recipes::all_nominal_predictors()) |>
-    recipes::step_novel(recipes::all_nominal_predictors()) |>
-    recipes::step_dummy(recipes::all_nominal_predictors()) |>
-    recipes::step_zv(recipes::all_predictors()) |>
-    recipes::step_normalize(recipes::all_numeric_predictors()) |>
-    recipes::prep(training = training_x, retain = FALSE)
-}
-
-rec <- fit_recipe(X_raw[ids$train, , drop = FALSE])
-
-bake_x <- function(i) {
-  as.data.frame(
-    recipes::bake(
-      rec,
-      new_data = X_raw[i, , drop = FALSE]
-    )
-  )
-}
-
-X_train <- bake_x(ids$train)
-X_cal <- bake_x(ids$calibration)
-X_val <- bake_x(ids$validation)
-X_test <- bake_x(ids$test)
-
-y_train <- y[ids$train]
-y_cal <- y[ids$calibration]
-y_val <- y[ids$validation]
-y_test <- y[ids$test]
-```
-
-Standardization is useful for regularized optimization because predictors on very different numerical scales can create poor conditioning and unstable numerical behavior.
-
-## Candidate Models
-
-The candidate set contains models with different levels of flexibility.
-
-| Model | Statistical role |
-|:--|:--|
-| Logistic regression | Interpretable linear log-odds baseline |
-| Ridge logistic regression | Logistic model with coefficient shrinkage |
-| Random forest | Nonlinear tree ensemble |
-| Gradient boosting | Sequential nonlinear ensemble |
-| Neural network (optional) | Flexible nonlinear composition |
-
-The purpose of including more complex models is not to assume they are superior. Flexible models are retained only when they demonstrate stronger held-out predictive performance, because additional flexibility can also increase overfitting risk.
-
-### Probability-Loss Criterion
-
-For a binary outcome, the validation log loss is
-
-\[
--\frac{1}{n}
-\sum_{i=1}^n
+-\frac{1}{n}\sum_{i=1}^{n}
 \left[
-y_i \log(\widehat p_i)
-+
-(1-y_i)\log(1-\widehat p_i)
+Y_i\log(\hat p_i)+(1-Y_i)\log(1-\hat p_i)
 \right].
 \]
 
-This is the negative average Bernoulli log-likelihood. Because this project is intended to estimate probabilities, log loss is the **primary model-selection criterion**.
-
-Brier score, ROC-AUC, and PR-AUC are used as supporting diagnostics.
-
-```{r metric-functions}
-clip_p <- function(p) {
-  pmax(1e-6, pmin(1 - 1e-6, as.numeric(p)))
-}
-
-logloss <- function(y, p) {
-  p <- clip_p(p)
-  -mean(y * log(p) + (1-y) * log1p(-p))
-}
-
-brier <- function(y, p) {
-  mean((clip_p(p) - y)^2)
-}
-
-probability_metrics <- function(y, p) {
-  p <- clip_p(p)
-
-  truth <- factor(
-    ifelse(y == 1, "default", "non_default"),
-    levels = c("default","non_default")
-  )
-
-  data.frame(
-    LogLoss = logloss(y, p),
-    Brier = brier(y, p),
-    ROC_AUC = yardstick::roc_auc_vec(
-      truth = truth,
-      estimate = p,
-      event_level = "first"
-    ),
-    PR_AUC = yardstick::pr_auc_vec(
-      truth = truth,
-      estimate = p,
-      event_level = "first"
-    )
-  )
-}
-
-fit_platt <- function(p, y) {
-  z <- qlogis(clip_p(p))
-
-  fit <- glm(
-    y ~ z,
-    family = binomial(),
-    data = data.frame(y = y, z = z)
-  )
-
-  fit
-}
-
-apply_platt <- function(fit, p) {
-  clip_p(
-    predict(
-      fit,
-      newdata = data.frame(z = qlogis(clip_p(p))),
-      type = "response"
-    )
-  )
-}
-```
-
-## Model Fitting and Optimization
-
-Statistical estimation can be expressed as an optimization problem. Logistic regression optimizes Bernoulli likelihood; ridge regression adds a penalty; boosting and neural networks optimize loss numerically.
-
-
-```{r fit-models, results='hide'}
-model_cache <- file.path(
-  params$output_dir,
-  "stat8670_models_and_predictions.rds"
-)
-
-need_fit <- isTRUE(params$force_retrain) || !file.exists(model_cache)
-
-if (need_fit) {
-
-  train_glm <- data.frame(Default = y_train, X_train)
-  logistic_fit <- glm(
-    Default ~ .,
-    data = train_glm,
-    family = binomial()
-  )
-
-  pred_logistic <- function(newx) {
-    clip_p(
-      predict(
-        logistic_fit,
-        newdata = newx,
-        type = "response"
-      )
-    )
-  }
-
-  set.seed(params$seed)
-  ridge_cv <- glmnet::cv.glmnet(
-    x = as.matrix(X_train),
-    y = y_train,
-    family = "binomial",
-    alpha = 0,
-    nfolds = 5,
-    standardize = FALSE,
-    type.measure = "deviance"
-  )
-
-  pred_ridge <- function(newx) {
-    clip_p(
-      as.numeric(
-        predict(
-          ridge_cv,
-          newx = as.matrix(newx),
-          s = "lambda.min",
-          type = "response"
-        )
-      )
-    )
-  }
-
-  train_rf <- data.frame(
-    Default = factor(
-      ifelse(y_train == 1, "default", "non_default"),
-      levels = c("non_default","default")
-    ),
-    X_train
-  )
-
-  rf_grid <- data.frame(
-    mtry = unique(pmax(
-      1L,
-      c(
-        floor(sqrt(ncol(X_train))),
-        floor(ncol(X_train)/3),
-        floor(ncol(X_train)/2)
-      )
-    )),
-    min.node.size = c(50L,100L,200L)[seq_along(
-      unique(pmax(
-        1L,
-        c(
-          floor(sqrt(ncol(X_train))),
-          floor(ncol(X_train)/3),
-          floor(ncol(X_train)/2)
-        )
-      ))
-    )]
-  )
-
-  rf_fits <- vector("list", nrow(rf_grid))
-
-  for (j in seq_len(nrow(rf_grid))) {
-    rf_fits[[j]] <- ranger::ranger(
-      Default ~ .,
-      data = train_rf,
-      probability = TRUE,
-      num.trees = 350,
-      mtry = rf_grid$mtry[j],
-      min.node.size = rf_grid$min.node.size[j],
-      seed = params$seed + j,
-      num.threads = 2,
-      importance = "none",
-      verbose = FALSE
-    )
-  }
-
-  rf_val_loss <- vapply(
-    rf_fits,
-    function(m) {
-      p <- predict(m, data = X_val)$predictions[, "default"]
-      logloss(y_val, p)
-    },
-    numeric(1)
-  )
-
-  rf_fit <- rf_fits[[which.min(rf_val_loss)]]
-
-  pred_rf <- function(newx) {
-    clip_p(
-      predict(
-        rf_fit,
-        data = newx,
-        num.threads = 1
-      )$predictions[, "default"]
-    )
-  }
-
-  train_gbm <- data.frame(Default = y_train, X_train)
-
-  gbm_grid <- expand.grid(
-    depth = c(1,2,3),
-    shrinkage = c(0.03,0.06),
-    stringsAsFactors = FALSE
-  )
-
-  gbm_fits <- vector("list", nrow(gbm_grid))
-  gbm_val_loss <- numeric(nrow(gbm_grid))
-
-  for (j in seq_len(nrow(gbm_grid))) {
-    set.seed(params$seed + 100 + j)
-
-    gbm_fits[[j]] <- gbm::gbm(
-      Default ~ .,
-      distribution = "bernoulli",
-      data = train_gbm,
-      n.trees = 600,
-      interaction.depth = gbm_grid$depth[j],
-      shrinkage = gbm_grid$shrinkage[j],
-      n.minobsinnode = 50,
-      bag.fraction = 0.7,
-      train.fraction = 1,
-      verbose = FALSE
-    )
-
-    p <- predict(
-      gbm_fits[[j]],
-      newdata = X_val,
-      n.trees = 600,
-      type = "response"
-    )
-
-    gbm_val_loss[j] <- logloss(y_val, p)
-  }
-
-  gbm_fit <- gbm_fits[[which.min(gbm_val_loss)]]
-
-  pred_gbm <- function(newx) {
-    clip_p(
-      predict(
-        gbm_fit,
-        newdata = newx,
-        n.trees = 600,
-        type = "response"
-      )
-    )
-  }
-
-  models <- list(
-    logistic = list(
-      fit = logistic_fit,
-      predict_fun = pred_logistic,
-      complexity = 1
-    ),
-    ridge = list(
-      fit = ridge_cv,
-      predict_fun = pred_ridge,
-      complexity = 2
-    ),
-    random_forest = list(
-      fit = rf_fit,
-      predict_fun = pred_rf,
-      complexity = 3
-    ),
-    boosting = list(
-      fit = gbm_fit,
-      predict_fun = pred_gbm,
-      complexity = 3
-    )
-  )
-
-  if (isTRUE(params$include_neural)) {
-
-    if (!requireNamespace("keras3", quietly = TRUE)) {
-      stop(
-        "include_neural=TRUE requires keras3. ",
-        "Install and configure keras3 before knitting."
-      )
-    }
-
-    set.seed(params$seed)
-
-    nn <- keras3::keras_model_sequential() |>
-      keras3::layer_dense(
-        units = 32,
-        activation = "relu",
-        input_shape = ncol(X_train)
-      ) |>
-      keras3::layer_dropout(rate = 0.15) |>
-      keras3::layer_dense(
-        units = 16,
-        activation = "relu"
-      ) |>
-      keras3::layer_dense(
-        units = 1,
-        activation = "sigmoid"
-      )
-
-    nn |>
-      keras3::compile(
-        optimizer = keras3::optimizer_adam(learning_rate = 0.001),
-        loss = "binary_crossentropy"
-      )
-
-    nn |>
-      keras3::fit(
-        x = as.matrix(X_train),
-        y = y_train,
-        validation_data = list(
-          as.matrix(X_val),
-          y_val
-        ),
-        epochs = 40,
-        batch_size = 512,
-        callbacks = list(
-          keras3::callback_early_stopping(
-            monitor = "val_loss",
-            patience = 4,
-            restore_best_weights = TRUE
-          )
-        ),
-        verbose = 0
-      )
-
-    pred_nn <- function(newx) {
-      clip_p(
-        as.numeric(
-          predict(
-            nn,
-            as.matrix(newx),
-            verbose = 0
-          )
-        )
-      )
-    }
-
-    models$neural_network <- list(
-      fit = nn,
-      predict_fun = pred_nn,
-      complexity = 4
-    )
-  }
-
-  model_eval <- list()
-  calibrators <- list()
-  prediction_store <- list()
-
-  for (nm in names(models)) {
-
-    p_cal_raw <- models[[nm]]$predict_fun(X_cal)
-    platt <- fit_platt(p_cal_raw, y_cal)
-
-    p_val_raw <- models[[nm]]$predict_fun(X_val)
-    p_val_platt <- apply_platt(platt, p_val_raw)
-
-    raw_metrics <- probability_metrics(y_val, p_val_raw)
-    cal_metrics <- probability_metrics(y_val, p_val_platt)
-
-    model_eval[[paste0(nm, "__raw")]] <- cbind(
-      Model = nm,
-      Calibration = "raw",
-      raw_metrics
-    )
-
-    model_eval[[paste0(nm, "__platt")]] <- cbind(
-      Model = nm,
-      Calibration = "platt",
-      cal_metrics
-    )
-
-    calibrators[[nm]] <- platt
-
-    prediction_store[[nm]] <- list(
-      validation_raw = p_val_raw,
-      validation_platt = p_val_platt,
-      test_raw = models[[nm]]$predict_fun(X_test)
-    )
-  }
-
-  comparison <- do.call(rbind, model_eval)
-  rownames(comparison) <- NULL
-  comparison <- comparison[order(
-    comparison$LogLoss,
-    comparison$Brier
-  ), ]
-
-  min_loss <- min(comparison$LogLoss)
-  near_best <- comparison[
-    comparison$LogLoss <= min_loss + 0.001,
-    ,
-    drop = FALSE
-  ]
-
-  complexity_lookup <- vapply(
-    models,
-    function(z) z$complexity,
-    numeric(1)
-  )
-
-  near_best$ComplexityRank <- complexity_lookup[near_best$Model]
-
-  selected_row <- near_best[
-    order(
-      near_best$ComplexityRank,
-      near_best$LogLoss,
-      near_best$Brier
-    ),
-    ,
-    drop = FALSE
-  ][1, ]
-
-  selected_name <- selected_row$Model
-  selected_calibration <- selected_row$Calibration
-
-  selected_model <- models[[selected_name]]
-
-  selected_platt <- if (selected_calibration == "platt") {
-    calibrators[[selected_name]]
-  } else {
-    NULL
-  }
-
-  selected_probability <- function(newx) {
-    p <- selected_model$predict_fun(newx)
-
-    if (!is.null(selected_platt)) {
-      p <- apply_platt(selected_platt, p)
-    }
-
-    clip_p(p)
-  }
-
-  p_val <- selected_probability(X_val)
-  p_test <- selected_probability(X_test)
-
-  saveRDS(
-    list(
-      models = models,
-      calibrators = calibrators,
-      comparison = comparison,
-      selected_name = selected_name,
-      selected_calibration = selected_calibration,
-      p_val = p_val,
-      p_test = p_test,
-      rec = rec,
-      ids = ids
-    ),
-    model_cache
-  )
-
-} else {
-
-  cached <- readRDS(model_cache)
-
-  models <- cached$models
-  calibrators <- cached$calibrators
-  comparison <- cached$comparison
-  selected_name <- cached$selected_name
-  selected_calibration <- cached$selected_calibration
-  p_val <- cached$p_val
-  p_test <- cached$p_test
-  rec <- cached$rec
-  ids <- cached$ids
-
-  # Rebuild baked partitions consistently.
-  X_train <- as.data.frame(
-    recipes::bake(rec, new_data = X_raw[ids$train, , drop = FALSE])
-  )
-  X_cal <- as.data.frame(
-    recipes::bake(rec, new_data = X_raw[ids$calibration, , drop = FALSE])
-  )
-  X_val <- as.data.frame(
-    recipes::bake(rec, new_data = X_raw[ids$validation, , drop = FALSE])
-  )
-  X_test <- as.data.frame(
-    recipes::bake(rec, new_data = X_raw[ids$test, , drop = FALSE])
-  )
-
-  y_train <- y[ids$train]
-  y_cal <- y[ids$calibration]
-  y_val <- y[ids$validation]
-  y_test <- y[ids$test]
-}
-```
-
-
-```{r candidate-prediction-helper, include=FALSE}
-predict_candidate_raw <- function(model_name, newx) {
-  m <- models[[model_name]]$fit
-
-  if (model_name == "logistic") {
-    return(clip_p(predict(m, newdata = newx, type = "response")))
-  }
-
-  if (model_name == "ridge") {
-    return(
-      clip_p(
-        as.numeric(
-          predict(
-            m,
-            newx = as.matrix(newx),
-            s = "lambda.min",
-            type = "response"
-          )
-        )
-      )
-    )
-  }
-
-  if (model_name == "random_forest") {
-    return(
-      clip_p(
-        predict(
-          m,
-          data = newx,
-          num.threads = 1
-        )$predictions[, "default"]
-      )
-    )
-  }
-
-  if (model_name == "boosting") {
-    return(
-      clip_p(
-        predict(
-          m,
-          newdata = newx,
-          n.trees = 600,
-          type = "response"
-        )
-      )
-    )
-  }
-
-  if (model_name == "neural_network") {
-    return(
-      clip_p(
-        as.numeric(
-          predict(
-            m,
-            as.matrix(newx),
-            verbose = 0
-          )
-        )
-      )
-    )
-  }
-
-  stop("Unknown model candidate: ", model_name)
-}
-
-candidate_probability <- function(model_name, calibration, newx) {
-  p <- predict_candidate_raw(model_name, newx)
-
-  if (calibration == "platt") {
-    p <- apply_platt(calibrators[[model_name]], p)
-  }
-
-  clip_p(p)
-}
-```
-
-
-## Deployment-Stability Simulation Design
-
-The empirical analysis provides an internally validated reference model but cannot identify how model behavior changes under a genuinely different deployment population. A controlled Monte Carlo design is therefore used to study distribution shift while keeping the relevant data-generating mechanisms known.
-
-### Baseline data-generating mechanism
-
-Three independent standardized predictors are generated as
+The Brier score is
 
 \[
-X_1,X_2,X_3\overset{\mathrm{iid}}{\sim}N(0,1),
+\frac{1}{n}\sum_{i=1}^{n}(Y_i-\hat p_i)^2.
 \]
 
-with binary outcome
+In the simulations, probability mean-squared error (PMSE) compares predictions with the known conditional probabilities:
 
 \[
-Y_i\mid X_i\sim\mathrm{Bernoulli}(p_i),
+\mathrm{PMSE}=\frac{1}{n}\sum_{i=1}^{n}(\hat p_i-p_i)^2,
 \]
 
-and baseline logistic mechanism
+where \(p_i\) is the true conditional event probability specified by the data-generating process. Unlike the Brier score, PMSE does not compare predictions with realized binary outcomes. It is available here because the true probabilities are known in the simulations.
 
-\[
-\operatorname{logit}(p_i)
-=
-\beta_0+0.8X_{i1}-0.6X_{i2}+0.4X_{i3}.
-\]
-
-The intercept is selected so that baseline event prevalence is approximately 12%, close to the empirical default rate. The slopes \(0.8\), \(-0.6\), and \(0.4\) are simulation design parameters chosen to create moderate effects of different magnitudes and directions; they are not estimates from the empirical loan data.
-
-Each condition uses \(R=500\) Monte Carlo replications with simulation seed 1998. Unless otherwise stated, training, validation/adaptation, and test samples contain 5,000 observations. Fresh samples are generated within each replication. The fitted model is ordinary logistic regression.
-
-Before introducing shift, a coefficient-recovery experiment verifies the implementation under correct specification. Across 500 replications, the mean estimates were \(-2.3903\), \(0.8030\), \(-0.6028\), and \(0.3991\) for true values \(-2.387\), \(0.8\), \(-0.6\), and \(0.4\), respectively.
-
-### Probability, discrimination, and calibration measures
-
-Because the true data-generating probabilities are known in simulation, the fitted model can be compared with an oracle using the true deployment probabilities. Probability accuracy is summarized by log loss, Brier score, and
-
-\[
-\operatorname{PMSE}
-=
-\frac{1}{n}\sum_{i=1}^{n}
-(\widehat p_i-p_i^{\mathrm{true}})^2.
-\]
-
-Excess log loss and excess Brier score are calculated relative to the oracle so that changes in population composition or intrinsic prediction difficulty are not confused with model error.
-
-Discrimination is measured by ROC-AUC. Calibration is summarized by the logistic calibration model
+Calibration is assessed through a logistic recalibration model,
 
 \[
 \operatorname{logit}\{P(Y=1)\}
 =
-a+b\,\operatorname{logit}(\widehat p),
+a+b\,\operatorname{logit}(\hat p),
 \]
 
-where ideal calibration corresponds to intercept \(a=0\) and slope \(b=1\).
+where \(a=0\) and \(b=1\) represent ideal calibration [@vancalster2019]. ROC-AUC measures discrimination rather than numerical probability accuracy [@steyerberg2010].
 
-### Covariate shift and misspecification
-
-The first experiment changes the deployment distribution of \(X_1\):
+Threshold-based performance is treated separately. Balanced accuracy is
 
 \[
-X_1^{\mathrm{deploy}}\sim N(\delta,1),
-\qquad
-\delta\in\{0,0.5,1,1.5,2\},
+\mathrm{BA}
+=
+\frac{1}{2}
+\left(
+\mathrm{Sensitivity}+\mathrm{Specificity}
+\right).
 \]
 
-while \(X_2\) and \(X_3\) remain standard normal. The conditional outcome mechanism is held fixed, so this is pure covariate shift.
+The probability model and the operating threshold are therefore distinct components of the predictive system.
 
-To examine the interaction between shift and model misspecification, the true mechanism is extended to
+
+# Empirical Loan-Default Application
+
+## Data and development design
+
+The analysis uses the *Loan Default Prediction Dataset* shared on Kaggle by NIKHIL [@nikhil2023]. It contains 255,347 records, including 29,653 defaults (11.6%). Sixteen borrower and loan characteristics, together with a loan-to-annual-income ratio, are used as predictors. LoanID is excluded from model fitting. The source does not establish the original collection process, observation horizon or whether the records are actual or synthetic, so the data are treated as a prediction benchmark.
+
+The data are divided into four non-overlapping partitions: 60% for training, 15% for calibration, 10% for validation, and 15% for final testing. Preprocessing is estimated using training data only. Logistic regression, ridge logistic regression, random forest, and gradient boosting are compared using validation log loss as the primary probability-quality criterion. Models within 0.001 log-loss units of the best candidate are considered practically tied; the code prefers the lower complexity rank, followed by lower log loss and Brier score. The empirical split uses seed 42, whereas the controlled simulations use seed 1998. This comparison reflects the continued use of both classical statistical and machine-learning classifiers in default prediction [@bazzana2024].
+
+## Internal predictive performance
+
+Raw logistic regression achieved the lowest validation log loss, although its performance was close to Platt-calibrated logistic regression. On the locked test set, the selected model achieved ROC-AUC 0.7585, PR-AUC 0.3288, Brier score 0.0908, and log loss 0.3111. ROC-AUC and PR-AUC are reported together because the event rate is modest and the two summaries emphasize different aspects of binary ranking performance [@davis2006].
+
+A validation-selected threshold of 0.1175 maximized balanced accuracy. On the test set, this threshold produced recall 0.6843 and specificity 0.7011. Test-set calibration was close to ideal, with calibration intercept approximately 0.0073 and slope approximately 0.9989.
+
+These results establish internal predictive performance. They do not establish stability under a different deployment distribution.
+
+# Monte Carlo Design
+
+## Baseline data-generating process
+
+The simulation uses three independent standard-normal predictors,
+
+\[
+X_1,X_2,X_3\overset{iid}{\sim}N(0,1),
+\]
+
+with baseline conditional outcome model
+
+\[
+\operatorname{logit}(p)
+=
+\beta_0+0.8X_1-0.6X_2+0.4X_3.
+\]
+
+The intercept is chosen to yield an event prevalence near 12%. Each condition uses 500 Monte Carlo replications with seed 1998. Unless otherwise stated, the development training sample, deployment adaptation sample, and deployment test sample each contain 5,000 observations. Fresh independent samples are generated in every replication so that adaptation is never evaluated on the same observations used to estimate the adaptation parameters.
+
+Because the data-generating process is known, the true conditional probability is available as an oracle benchmark. This permits separation of intrinsic prediction difficulty from error caused by estimation, misspecification, or failure to adapt.
+
+## Experiment 1: covariate shift and misspecification
+
+The true model includes an additional quadratic term,
 
 \[
 \operatorname{logit}(p)
@@ -1181,1709 +277,292 @@ To examine the interaction between shift and model misspecification, the true me
 \beta_0+0.8X_1-0.6X_2+0.4X_3+\beta_4X_1^2,
 \]
 
-with
+while the fitted development model omits \(X_1^2\). Misspecification is varied through \(\beta_4\), and deployment shift is introduced through
 
 \[
-\beta_4\in\{0,0.25,0.50\}.
+X_1\sim N(\delta,1).
 \]
 
-For each value of \(\beta_4\), the intercept is recalibrated so that baseline prevalence at \(\delta=0\) remains approximately 12%. The fitted logistic model deliberately omits \(X_1^2\). Thus \(\beta_4=0\) is the correctly specified control condition, while \(0.25\) and \(0.50\) represent moderate and stronger misspecification.
+The misspecification parameter is varied over \(\beta_4\in\{0,0.25,0.50\}\), and the covariate-shift parameter over \(\delta\in\{0,0.5,1,1.5,2\}\). For each value of \(\beta_4\), the intercept \(\beta_0\) is calibrated at \(\delta=0\) so that baseline event prevalence remains approximately 12%. The fitted logistic model deliberately omits \(X_1^2\), making \(\beta_4=0\) the correctly specified control and the positive values progressively stronger misspecification. The conditional outcome mechanism is unchanged between development and deployment.
 
-### Decision-threshold stability
+## Experiment 2: intercept outcome shift
 
-For each misspecification condition and replication, the fitted model is trained on the baseline population. An independent baseline validation sample at \(\delta=0\) selects the threshold maximizing balanced accuracy over the prespecified grid \(0.01,0.015,\ldots,0.50\). For each deployment value of \(\delta\), a separate shifted adaptation sample estimates the deployment-optimal threshold, and an independent shifted test sample evaluates both the frozen baseline threshold and the adapted threshold.
-
-This design separates threshold selection from threshold evaluation. The main quantities are threshold movement and the balanced-accuracy gain from adaptation.
-
-### Intercept outcome shift
-
-The second outcome-mechanism experiment leaves the predictor distribution and slopes unchanged but adds a deployment intercept shift,
+The development model is
 
 \[
-\operatorname{logit}(p_{\mathrm{deploy}})
+\operatorname{logit}(p_P)
 =
-\beta_0+\gamma+0.8X_1-0.6X_2+0.4X_3,
+\beta_0+0.8X_1-0.6X_2+0.4X_3,
 \]
 
-where
+while deployment follows
 
 \[
-\gamma\in\{0,0.25,0.50,0.75,1\}.
-\]
-
-The original fitted model is not updated. Because
-
-\[
-\operatorname{logit}(p_{\mathrm{deploy}})
+\operatorname{logit}(p_Q)
 =
-\gamma+\operatorname{logit}(p_{\mathrm{baseline}}),
+\beta_0+\gamma+0.8X_1-0.6X_2+0.4X_3.
 \]
 
-the population calibration relationship is expected to have intercept \(a=\gamma\) and slope \(b=1\).
+The intercept-shift parameter is varied over \(\gamma\in\{0,0.25,0.50,0.75,1\}\). Thus baseline risk changes while predictor effects remain fixed.
 
-### Slope outcome shift
+## Experiment 3: predictor-effect shift
 
-The final experiment changes the true deployment effect of \(X_1\):
+The effect of \(X_1\) changes according to
 
 \[
 \beta_{1,\mathrm{deploy}}=0.8-\kappa,
 \]
 
-with
+with \(\kappa\in\{0,0.4,0.8,1.2,1.6\}\). The deployment intercept is recalibrated so that prevalence remains near 12%, isolating structural change in the predictor--outcome relationship from prevalence change.
+
+# Failure Patterns Under Distribution Shift
+
+The controlled experiments show that different shift mechanisms damage different parts of the predictive system. Table 1 summarizes the strongest condition from each experiment before adaptation. Table 1 reports the retained summaries from the reconstructed initial failure-pattern experiments, whereas Table 2 and Figures 1--3 report the separately executed adaptation experiments. Their unadapted estimates therefore differ slightly because they use different simulated samples. These rows should be interpreted as mechanism contrasts rather than as directly comparable real-world scenarios because the three experiments perturb different components of the data-generating process.
+
+\begin{table}[!htbp]
+\centering
+\caption{Predictive behavior at the strongest pre-adaptation shift condition. PMSE measures squared error against the known conditional probabilities.}
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.8cm}@{\hspace{10pt}}>{\raggedright\arraybackslash}p{2.7cm}rrrrr}
+\toprule
+Mechanism & Condition & \shortstack{Event\\rate} & PMSE & ROC-AUC & \shortstack{Calibration\\intercept} & \shortstack{Calibration\\slope} \\
+\midrule
+Covariate shift + misspecification & \parbox[t]{2.7cm}{$\beta_4=0.50$\\$\delta=2.0$} & 0.5908 & 0.0444 & 0.8881 & 1.221 & 1.815 \\
+Intercept outcome shift & $\gamma=1.0$ & 0.2435 & 0.0200 & 0.7562 & 0.998 & 0.998 \\
+Predictor-effect shift & $\kappa=1.6$ & 0.1201 & 0.0269 & 0.4726 & -2.213 & -0.090 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+Under correctly specified covariate shift, fitted probabilities remain close to the oracle. When nonlinear structure is omitted, however, the same shift increasingly exposes misspecification. Under strong misspecification, probability mean-squared error rises sharply as the deployment distribution moves away from the development population. Discrimination can simultaneously improve because the shifted population becomes more separable, illustrating that increasing ROC-AUC does not imply improving probability accuracy.
+
+Under intercept outcome shift, the calibration intercept tracks the imposed shift while the calibration slope remains near one. Probability error and log loss deteriorate, but the fitted model remains close to the oracle in ranking. This is the characteristic pattern of a baseline-risk change and is consistent with the distinction between discrimination and calibration emphasized in prediction-model evaluation [@steyerberg2010; @vancalster2019].
+
+Under predictor-effect shift, the original model loses discrimination as the effect of \(X_1\) weakens and reverses. At the strongest shift, the original model's ROC-AUC falls from approximately 0.762 to 0.473 while the oracle remains informative. This represents structural obsolescence rather than simple probability-scale drift.
+
+Decision thresholds form a separate source of instability. Under covariate shift, the balanced-accuracy-optimal threshold moves substantially even when the conditional probability model is correctly specified. Model validity and decision-rule validity are therefore not equivalent.
+
+# Adaptation After Distribution Shift
+
+## Adaptation strategies
+
+The adaptation experiment compares interventions that modify different components of the predictive system. The development model is first fitted on a baseline training sample of \(n=5000\). For recalibration and deployment refitting, adaptation parameters are estimated on an independent labeled deployment sample of \(n=5000\), and all reported performance is then computed on a separate deployment test sample of \(n=5000\). In the covariate-shift adaptation experiment, the misspecification level is fixed at the strong condition \(\beta_4=0.50\), while \(\delta\in\{0,0.5,1,1.5,2\}\).
+
+Let \(\hat\eta_{\mathrm{old}}=\operatorname{logit}(\hat p_{\mathrm{old}})\) denote the linear predictor from the frozen development model.
+
+**No adaptation.** The original probabilities \(\hat p_{\mathrm{old}}\) are used without modification.
+
+**Intercept recalibration.** On the deployment adaptation sample, a logistic model with \(\hat\eta_{\mathrm{old}}\) as an offset estimates only a new intercept \(a\):
 
 \[
-\kappa\in\{0,0.4,0.8,1.2,1.6\}.
+\operatorname{logit}\{P(Y=1)\}=a+\hat\eta_{\mathrm{old}}.
 \]
 
-The deployment coefficient therefore moves from \(0.8\) to \(0.4\), \(0\), \(-0.4\), and \(-0.8\). For each condition, the deployment intercept is recalibrated to keep event prevalence near 12%. This isolates deterioration caused by a changing predictor--outcome relationship rather than by a large prevalence change.
+This intervention changes baseline risk while preserving the original score scale and ranking.
 
-### Monte Carlo uncertainty
-
-For a simulation summary \(\bar\theta\), Monte Carlo standard error is
+**Intercept-and-slope recalibration.** A logistic model is fitted on the adaptation sample using the old linear predictor as the sole covariate:
 
 \[
-\operatorname{MCSE}(\bar\theta)
-=
-\frac{s_\theta}{\sqrt{R}},
+\operatorname{logit}\{P(Y=1)\}=a+b\hat\eta_{\mathrm{old}}.
 \]
 
-where \(s_\theta\) is the empirical standard deviation across the \(R=500\) replications. MCSE quantifies numerical uncertainty from the finite number of simulation runs; it is not an uncertainty interval for real-world deployment performance.
+This can shift, rescale, or reverse the existing one-dimensional score but cannot separately change the coefficients of its component predictors. These recalibration strategies correspond to established model-updating approaches [@steyerberg2004].
 
-
-\FloatBarrier
-\clearpage
-
-# Results
-
-## Validation-Based Model Selection
-
-```{r validation-model-comparison}
-comparison_display <- comparison |>
-  arrange(LogLoss, Brier) |>
-  mutate(
-    Model = recode(
-      Model,
-      logistic = "Logistic regression",
-      ridge = "Ridge logistic",
-      random_forest = "Random forest",
-      boosting = "Gradient boosting"
-    ),
-    Calibration = recode(Calibration, raw = "Raw", platt = "Platt"),
-    across(
-      c(LogLoss,Brier,ROC_AUC,PR_AUC),
-      ~ round(.x, 4)
-    )
-  )
-
-paper_kable(
-  comparison_display,
-  caption = "Validation probability performance. Lower LogLoss and Brier are better; higher ROC-AUC and PR-AUC are better."
-)
-```
-
-```{r validation-model-plot}
-plot_comp <- comparison |>
-  mutate(
-    Candidate = paste(Model, Calibration, sep = " + ")
-  ) |>
-  arrange(LogLoss)
-
-ggplot(
-  plot_comp,
-  aes(
-    x = reorder(Candidate, LogLoss),
-    y = LogLoss
-  )
-) +
-  geom_col(width = 0.7) +
-  coord_flip() +
-  labs(
-    title = "Validation Log Loss by Candidate",
-    x = NULL,
-    y = "Validation log loss"
-  )
-```
-
-The lowest validation log loss was obtained by **`r selected_name`** with **`r selected_calibration`** probabilities.
-
-Selection is based primarily on validation log loss because the target of interest is a probability. A prespecified parsimony rule is used when candidates are practically tied within 0.001 log-loss units: the simpler candidate is preferred when additional complexity does not produce a meaningful validation improvement.
-
-
-### Bootstrap Stability of the Validation Ranking
-
-A single validation table reports one realized comparison. To assess whether the ranking is fragile to the particular validation observations, the fitted candidate models are held fixed and the validation set is bootstrap-resampled. This is a **conditional stability analysis of the validation ranking**; it is not a substitute for a completely new external sample or repeated refitting on new development splits.
-
-```{r validation-ranking-stability}
-candidate_labels <- paste(
-  comparison$Model,
-  comparison$Calibration,
-  sep = " + "
-)
-
-candidate_predictions <- lapply(
-  seq_len(nrow(comparison)),
-  function(i) {
-    candidate_probability(
-      comparison$Model[i],
-      comparison$Calibration[i],
-      X_val
-    )
-  }
-)
-
-names(candidate_predictions) <- candidate_labels
-
-B_rank <- max(100L, as.integer(params$bootstrap_reps))
-set.seed(params$seed + 801L)
-
-rank_boot <- matrix(
-  NA_real_,
-  nrow = B_rank,
-  ncol = length(candidate_predictions),
-  dimnames = list(NULL, names(candidate_predictions))
-)
-
-for (b in seq_len(B_rank)) {
-  ix <- sample.int(length(y_val), replace = TRUE)
-
-  rank_boot[b, ] <- vapply(
-    candidate_predictions,
-    function(p) logloss(y_val[ix], p[ix]),
-    numeric(1)
-  )
-}
-
-winner <- apply(
-  rank_boot,
-  1,
-  function(z) names(z)[which.min(z)]
-)
-
-selection_stability <- data.frame(
-  Candidate = names(candidate_predictions),
-  BootstrapSelectionRate = vapply(
-    names(candidate_predictions),
-    function(nm) mean(winner == nm),
-    numeric(1)
-  ),
-  MeanBootstrapLogLoss = colMeans(rank_boot),
-  SDLogLoss = apply(rank_boot, 2, sd)
-) |>
-  arrange(desc(BootstrapSelectionRate), MeanBootstrapLogLoss)
-
-bootstrap_stability_display <- selection_stability |>
-  transmute(
-    Candidate,
-    `Selection rate` = scales::percent(BootstrapSelectionRate, accuracy = 0.1),
-    `Mean log loss` = round(MeanBootstrapLogLoss, 5),
-    `SD` = round(SDLogLoss, 5)
-  )
-
-paper_kable(
-  bootstrap_stability_display,
-  row.names = FALSE,
-  align = c("l","r","r","r"),
-  caption = "Bootstrap stability of the validation model ranking, conditional on the fitted candidate models."
-)
-```
-
-```{r validation-ranking-stability-plot, fig.width=5.8, fig.height=3.6, out.width='78%'}
-ggplot(
-  selection_stability,
-  aes(
-    x = reorder(Candidate, BootstrapSelectionRate),
-    y = BootstrapSelectionRate
-  )
-) +
-  geom_col(width = 0.7) +
-  coord_flip() +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  labs(
-    title = "Bootstrap Stability of Validation Model Selection",
-    x = NULL,
-    y = "Share of bootstrap validation samples selected"
-  )
-```
-
-A high bootstrap selection rate for the retained candidate indicates that its validation advantage is not driven only by a small number of observations. A diffuse distribution of selection rates would instead indicate that the candidate models are practically difficult to distinguish with the available validation evidence.
-
-
-## Decision-Threshold Optimization
-
-Probability estimation and classification are treated as different steps. A different threshold can be appropriate when the consequences of false positives and false negatives differ.
-
-For comparison, an F2-based objective is also evaluated. Because F2 weights recall more strongly than precision, it generally favors a lower cutoff and a larger review set.
-
-The primary threshold objective is **balanced accuracy** because verified economic costs are unavailable:
+**Importance-weighted refitting.** This intervention is used only in the covariate-shift experiment. Because baseline \(X_1\sim N(0,1)\) and deployment \(X_1\sim N(\delta,1)\), the exact density ratio is
 
 \[
-\text{Balanced Accuracy}
-=
-\frac{\text{Recall}+\text{Specificity}}{2},
+w(X_1)=\frac{q(X_1)}{p(X_1)}
+=\exp\left(\delta X_1-\frac{\delta^2}{2}\right).
 \]
 
-which treats sensitivity and specificity symmetrically.
+The density-ratio weights are evaluated on the baseline training observations. To reduce the influence of extreme finite-sample weights, the weights are capped at their empirical 99th percentile within each training sample; the capped weights are then normalized to have mean one. The resulting weights are used in a weighted logistic refit of the same linear model class. Thus the method changes the target covariate distribution represented by the fitting criterion but does not add the omitted quadratic term. This implements the density-ratio logic of covariate-shift weighting [@shimodaira2000].
 
-This should not be interpreted as a universal lending-policy optimum. If real false-negative and false-positive costs become available, expected cost should replace a generic statistical objective.
+**Deployment refitting.** A new logistic model is estimated directly from the labeled deployment adaptation sample using the same predictor set available to the fitted model. Under predictor-effect shift this allows the individual predictor coefficients to change; under the misspecified covariate-shift experiment it remains a linear refit and therefore does not receive knowledge of the omitted quadratic term.
 
-```{r threshold-analysis}
-threshold_metrics <- function(y, p, thresholds = seq(0.01, 0.40, by = 0.0025)) {
+**Threshold adaptation.** Threshold revision is evaluated separately because it changes the operating rule rather than the probability model. A baseline threshold maximizing balanced accuracy is estimated from an independent baseline validation sample. For each shifted condition, a new threshold is selected on an independent shifted tuning sample and compared with the frozen baseline threshold on a separate shifted test sample. This separation avoids evaluating a threshold on the same observations used to select it.
 
-  do.call(
-    rbind,
-    lapply(thresholds, function(t) {
+## Probability performance
 
-      flag <- p >= t
-
-      TP <- sum(flag & y == 1)
-      FP <- sum(flag & y == 0)
-      TN <- sum(!flag & y == 0)
-      FN <- sum(!flag & y == 1)
-
-      recall <- if ((TP + FN) > 0) TP / (TP + FN) else NA_real_
-      precision <- if ((TP + FP) > 0) TP / (TP + FP) else NA_real_
-      specificity <- if ((TN + FP) > 0) TN / (TN + FP) else NA_real_
-
-      f1 <- if ((2*TP + FP + FN) > 0) {
-        2*TP / (2*TP + FP + FN)
-      } else {
-        NA_real_
-      }
-
-      f2 <- if ((5*TP + 4*FN + FP) > 0) {
-        5*TP / (5*TP + 4*FN + FP)
-      } else {
-        NA_real_
-      }
-
-      data.frame(
-        Threshold = t,
-        Recall = recall,
-        Precision = precision,
-        Specificity = specificity,
-        FalsePositiveRate = 1 - specificity,
-        FlaggedRate = mean(flag),
-        F1 = f1,
-        F2 = f2,
-        BalancedAccuracy = mean(c(recall, specificity), na.rm = TRUE),
-        YoudenJ = recall + specificity - 1,
-        TP = TP,
-        FP = FP,
-        TN = TN,
-        FN = FN
-      )
-    })
-  )
-}
-
-val_thresholds <- threshold_metrics(y_val, p_val)
-
-objective <- tolower(params$threshold_objective)
-
-if (objective == "balanced_accuracy") {
-  best_i <- which.max(val_thresholds$BalancedAccuracy)
-} else if (objective == "f1") {
-  best_i <- which.max(val_thresholds$F1)
-} else if (objective == "f2") {
-  best_i <- which.max(val_thresholds$F2)
-} else if (objective == "youden") {
-  best_i <- which.max(val_thresholds$YoudenJ)
-} else {
-  stop(
-    "threshold_objective must be one of: ",
-    "balanced_accuracy, f1, f2, youden"
-  )
-}
-
-selected_threshold <- val_thresholds$Threshold[best_i]
-
-threshold_objective_summary <- data.frame(
-  Objective = c(
-    "F2",
-    "F1",
-    "Balanced accuracy",
-    "Youden J"
-  ),
-  Threshold = c(
-    val_thresholds$Threshold[which.max(val_thresholds$F2)],
-    val_thresholds$Threshold[which.max(val_thresholds$F1)],
-    val_thresholds$Threshold[which.max(val_thresholds$BalancedAccuracy)],
-    val_thresholds$Threshold[which.max(val_thresholds$YoudenJ)]
-  )
-)
-
-threshold_objective_summary$Threshold <- sprintf(
-  "%.1f%%",
-  100 * threshold_objective_summary$Threshold
-)
-
-paper_kable(
-  threshold_objective_summary,
-  caption = "Validation-selected thresholds under different statistical objectives."
-)
+```{r fig-adaptation-logloss, fig.cap="Probability performance after distribution shift. Lower log loss indicates more accurate probabilistic predictions."}
+plot_probability("mean_log_loss", "mcse_log_loss", "Mean test log loss")
 ```
 
-```{r threshold-curves}
-threshold_long <- val_thresholds |>
-  select(
-    Threshold,
-    Recall,
-    Precision,
-    Specificity,
-    FalsePositiveRate,
-    FlaggedRate
-  ) |>
-  pivot_longer(
-    -Threshold,
-    names_to = "Metric",
-    values_to = "Rate"
+At the strongest covariate-shift condition with misspecification, mean log loss is 0.5059 without adaptation, 0.4468 after intercept recalibration, 0.4130 after intercept-and-slope recalibration, 0.3901 after importance-weighted refitting, and 0.3873 after deployment refitting. The ordering shows that global score recalibration repairs part of the probability error but does not remove the consequences of omitted nonlinear structure.
+
+For the strongest intercept shift (\(\gamma=1\)), mean log loss decreases from 0.5420 without adaptation to approximately 0.4747 after intercept recalibration, essentially matching deployment refitting at 0.4745. This is consistent with the data-generating mechanism: the shift is primarily an intercept change, so an intercept correction directly targets the changed component.
+
+For the strongest predictor-effect shift (\(\kappa=1.6\)), mean log loss is 0.4366 without adaptation, 0.3665 after intercept-and-slope recalibration, and 0.3167 after deployment refitting. Recalibration therefore improves probability performance but does not fully reconstruct the changed conditional model.
+
+
+```{r strongest-adaptation-table}
+endpoint_file <- file.path(publication_dir, "adaptation_probability_summary.csv")
+if (file.exists(endpoint_file)) {
+  endpoint <- read.csv(endpoint_file, stringsAsFactors = FALSE)
+  endpoint <- endpoint[with(endpoint,
+    (shift_type == "covariate_misspecified" & shift_value == 2) |
+    (shift_type == "intercept_shift" & shift_value == 1) |
+    (shift_type == "slope_shift" & shift_value == 1.6)), ]
+  method_names <- c(
+    none = "No adaptation",
+    intercept_recal = "Intercept recalibration",
+    intercept_slope_recal = "Intercept + slope recalibration",
+    importance_weighted_refit = "Importance-weighted refit",
+    deployment_refit = "Deployment refit"
   )
-
-ggplot(
-  threshold_long,
-  aes(
-    x = Threshold,
-    y = Rate,
-    linetype = Metric
+  shift_names <- c(
+    covariate_misspecified = "Covariate + misspecification",
+    intercept_shift = "Intercept shift",
+    slope_shift = "Predictor-effect shift"
   )
-) +
-  geom_line(linewidth = 0.85) +
-  geom_vline(
-    xintercept = selected_threshold,
-    linetype = "dashed"
-  ) +
-  scale_x_continuous(
-    labels = scales::percent_format(accuracy = 1)
-  ) +
-  scale_y_continuous(
-    labels = scales::percent_format(accuracy = 1)
-  ) +
-  labs(
-    title = "Validation Threshold Trade-off",
-    subtitle = paste0(
-      "Dashed line = ",
-      params$threshold_objective,
-      " selected cutoff"
-    ),
-    x = "Review threshold",
-    y = "Rate",
-    linetype = NULL
-  )
-```
-
-The chosen threshold is **`r sprintf("%.1f%%", 100*selected_threshold)`** under the declared **`r params$threshold_objective`** objective.
-
-The threshold was selected **only on validation data**. The test set was not used to tune it.
-
-
-### Sensitivity to the Threshold Objective
-
-Balanced accuracy is the primary threshold objective because verified monetary error costs are unavailable. To show that the operating rule depends on the objective rather than on the probability model, four thresholds are selected independently on validation data and then evaluated on the locked test set.
-
-```{r threshold-objective-sensitivity}
-threshold_choice <- data.frame(
-  Objective = c("F2","F1","Balanced accuracy","Youden J"),
-  Threshold = c(
-    val_thresholds$Threshold[which.max(val_thresholds$F2)],
-    val_thresholds$Threshold[which.max(val_thresholds$F1)],
-    val_thresholds$Threshold[which.max(val_thresholds$BalancedAccuracy)],
-    val_thresholds$Threshold[which.max(val_thresholds$YoudenJ)]
-  )
-)
-
-threshold_class_metrics <- function(y, p, threshold) {
-  flag <- p >= threshold
-  TP <- sum(flag & y == 1)
-  FP <- sum(flag & y == 0)
-  TN <- sum(!flag & y == 0)
-  FN <- sum(!flag & y == 1)
-
-  data.frame(
-    Threshold = threshold,
-    Recall = if ((TP + FN) > 0) TP/(TP + FN) else NA_real_,
-    Precision = if ((TP + FP) > 0) TP/(TP + FP) else NA_real_,
-    Specificity = if ((TN + FP) > 0) TN/(TN + FP) else NA_real_,
-    FalsePositiveRate = if ((FP + TN) > 0) FP/(FP + TN) else NA_real_,
-    FlaggedRate = mean(flag),
-    Accuracy = (TP + TN)/length(y),
-    TP = TP, FP = FP, TN = TN, FN = FN
-  )
-}
-
-threshold_test_rows <- lapply(
-  seq_len(nrow(threshold_choice)),
-  function(i) {
-    z <- threshold_class_metrics(
-      y_test,
-      p_test,
-      threshold_choice$Threshold[i]
-    )
-
-    cbind(
-      Objective = threshold_choice$Objective[i],
-      z
-    )
-  }
-)
-
-threshold_test_comparison <- do.call(
-  rbind,
-  threshold_test_rows
-)
-
-threshold_test_display <- threshold_test_comparison |>
-  select(
-    Objective, Threshold, Recall, Precision,
-    Specificity, FalsePositiveRate, FlaggedRate, Accuracy
-  ) |>
-  mutate(
-    across(
-      c(
-        Threshold, Recall, Precision, Specificity,
-        FalsePositiveRate, FlaggedRate, Accuracy
-      ),
-      ~ round(.x, 4)
-    )
-  )
-
-paper_kable(
-  threshold_test_display |>
-    select(
-      Objective, Threshold, Recall,
-      Precision, Specificity
-    ),
-  caption = "Test sensitivity, precision, and specificity under validation-selected threshold objectives."
-)
-
-paper_kable(
-  threshold_test_display |>
-    select(
-      Objective, FalsePositiveRate,
-      FlaggedRate, Accuracy
-    ),
-  caption = "Test review burden and overall accuracy under validation-selected threshold objectives."
-)
-```
-
-This comparison is not intended to identify a universally optimal cutoff. It demonstrates that the operating point depends on the chosen loss or utility criterion. In a production setting, verified economic costs or review-capacity constraints should replace a generic statistical threshold objective.
-
-
-## Held-Out Test Performance
-
-```{r test-metrics}
-class_metrics <- function(y, p, threshold) {
-
-  flag <- p >= threshold
-
-  TP <- sum(flag & y == 1)
-  FP <- sum(flag & y == 0)
-  TN <- sum(!flag & y == 0)
-  FN <- sum(!flag & y == 1)
-
-  data.frame(
-    Threshold = threshold,
-    Recall = TP / (TP + FN),
-    Precision = if ((TP + FP) > 0) TP/(TP+FP) else NA_real_,
-    Specificity = TN/(TN+FP),
-    FalsePositiveRate = FP/(FP+TN),
-    FlaggedRate = mean(flag),
-    Accuracy = (TP+TN)/length(y),
-    TP = TP,
-    FP = FP,
-    TN = TN,
-    FN = FN
-  )
-}
-
-test_prob <- probability_metrics(y_test, p_test)
-test_class <- class_metrics(y_test, p_test, selected_threshold)
-
-test_summary <- cbind(
-  Model = paste(selected_name, selected_calibration, sep = " + "),
-  test_prob,
-  test_class
-)
-
-test_probability_display <- test_summary |>
-  select(Model, LogLoss, Brier, ROC_AUC, PR_AUC) |>
-  mutate(
-    across(
-      c(LogLoss, Brier, ROC_AUC, PR_AUC),
-      ~ round(as.numeric(.x), 4)
-    )
-  )
-
-test_operating_display <- test_summary |>
-  select(
-    Threshold, Recall, Precision, Specificity,
-    FalsePositiveRate, FlaggedRate, Accuracy,
-    TP, FP, TN, FN
-  ) |>
-  mutate(
-    across(
-      c(
-        Threshold, Recall, Precision, Specificity,
-        FalsePositiveRate, FlaggedRate, Accuracy
-      ),
-      ~ round(as.numeric(.x), 4)
-    )
-  )
-
-paper_kable(
-  test_probability_display,
-  caption = "Held-out test probability performance."
-)
-
-paper_kable(
-  test_operating_display[, c(
-    "Threshold","Recall","Precision","Specificity",
-    "FalsePositiveRate","FlaggedRate","Accuracy"
-  )],
-  caption = "Held-out test operating characteristics at the validation-selected threshold."
-)
-
-paper_kable(
-  test_operating_display[, c("TP","FP","TN","FN")],
-  caption = "Held-out test confusion-matrix counts."
-)
-```
-
-This table is the final generalization assessment for the selected probability model and validation-selected threshold.
-
-
-### Bootstrap Uncertainty for Final Test Metrics
-
-Point estimates can conceal sampling uncertainty. The following intervals bootstrap the **locked test observations** while holding the fitted model and threshold fixed. They quantify uncertainty in the reported test metrics; they do not account for uncertainty arising from an entirely new model-development sample.
-
-```{r test-bootstrap-ci, results='asis'}
-test_metric_vector <- function(y, p, threshold) {
-  prob <- probability_metrics(y, p)
-  cls <- class_metrics(y, p, threshold)
-
-  c(
-    ROC_AUC = prob$ROC_AUC,
-    PR_AUC = prob$PR_AUC,
-    Brier = prob$Brier,
-    LogLoss = prob$LogLoss,
-    Recall = cls$Recall,
-    Precision = cls$Precision,
-    Specificity = cls$Specificity,
-    FalsePositiveRate = cls$FalsePositiveRate,
-    FlaggedRate = cls$FlaggedRate,
-    Accuracy = cls$Accuracy
-  )
-}
-
-B_test <- max(100L, as.integer(params$bootstrap_reps))
-set.seed(params$seed + 901L)
-
-boot_test <- replicate(
-  B_test,
-  {
-    ix <- sample.int(length(y_test), replace = TRUE)
-    test_metric_vector(
-      y_test[ix],
-      p_test[ix],
-      selected_threshold
-    )
-  }
-)
-
-boot_test <- t(boot_test)
-
-point <- test_metric_vector(
-  y_test,
-  p_test,
-  selected_threshold
-)
-
-ci_table <- data.frame(
-  Metric = names(point),
-  Estimate = as.numeric(point),
-  Lower95 = apply(
-    boot_test,
-    2,
-    quantile,
-    probs = 0.025,
-    na.rm = TRUE
-  ),
-  Upper95 = apply(
-    boot_test,
-    2,
-    quantile,
-    probs = 0.975,
-    na.rm = TRUE
-  )
-)
-
-ci_display <- ci_table |>
-  transmute(
-    Metric,
-    Estimate = round(Estimate, 4),
-    `Lower 95%` = round(Lower95, 4),
-    `Upper 95%` = round(Upper95, 4)
-  )
-
-knitr::kable(
-  ci_display,
-  format = "pipe",
-  row.names = FALSE,
-  align = c("l", "r", "r", "r"),
-  caption = "Bootstrap 95% intervals for locked test performance."
-)
-```
-
-
-## Discrimination: ROC and Precision--Recall Performance
-
-```{r roc-pr-curves, fig.width=5.4, fig.height=3.1, out.width='72%'}
-truth_test <- factor(
-  ifelse(y_test == 1, "default", "non_default"),
-  levels = c("default","non_default")
-)
-
-roc_df <- yardstick::roc_curve(
-  data.frame(truth = truth_test, probability = p_test),
-  truth = truth,
-  probability,
-  event_level = "first"
-)
-
-pr_df <- yardstick::pr_curve(
-  data.frame(truth = truth_test, probability = p_test),
-  truth = truth,
-  probability,
-  event_level = "first"
-)
-
-ggplot(roc_df, aes(x = 1 - specificity, y = sensitivity)) +
-  geom_line(linewidth = 0.9) +
-  geom_abline(linetype = 2) +
-  coord_equal() +
-  labs(
-    title = "Held-out ROC Curve",
-    x = "False-positive rate",
-    y = "True-positive rate"
-  )
-```
-
-```{r pr-curve, fig.width=5.4, fig.height=3.1, out.width='72%'}
-ggplot(pr_df, aes(x = recall, y = precision)) +
-  geom_line(linewidth = 0.9) +
-  geom_hline(
-    yintercept = mean(y_test),
-    linetype = 2
-  ) +
-  labs(
-    title = "Held-out Precision--Recall Curve",
-    subtitle = "Dashed line = test default prevalence",
-    x = "Recall",
-    y = "Precision"
-  )
-```
-
-## Calibration
-
-A useful risk model should not only rank loans correctly; its probabilities should also correspond reasonably to observed frequencies.
-
-```{r calibration}
-calibration_table <- function(y, p, groups = 10) {
-
-  qs <- unique(
-    quantile(
-      p,
-      probs = seq(0,1,length.out = groups+1),
-      type = 8
-    )
-  )
-
-  if (length(qs) < 3) {
-    return(
-      data.frame(
-        Group = "All",
-        N = length(y),
-        MeanPredicted = mean(p),
-        ObservedDefaultRate = mean(y)
-      )
-    )
-  }
-
-  qs[1] <- -Inf
-  qs[length(qs)] <- Inf
-
-  g <- cut(
-    p,
-    breaks = qs,
-    include.lowest = TRUE
-  )
-
-  do.call(
-    rbind,
-    lapply(
-      split(seq_along(y), g),
-      function(i) {
-        data.frame(
-          Group = as.character(g[i[1]]),
-          N = length(i),
-          MeanPredicted = mean(p[i]),
-          ObservedDefaultRate = mean(y[i])
-        )
-      }
-    )
-  )
-}
-
-cal_test <- calibration_table(y_test, p_test)
-
-calibration_display <- cal_test |>
-  transmute(
-    `Risk group` = Group,
-    N,
-    `Mean predicted` = round(MeanPredicted, 4),
-    `Observed default rate` = round(ObservedDefaultRate, 4)
-  )
-
-paper_kable(
-  calibration_display,
-  row.names = FALSE,
-  align = c("l","r","r","r"),
-  caption = "Held-out calibration by risk group."
-)
-```
-
-```{r calibration-plot, fig.width=5.4, fig.height=3.3, out.width='72%'}
-ggplot(
-  cal_test,
-  aes(
-    x = MeanPredicted,
-    y = ObservedDefaultRate,
-    size = N
-  )
-) +
-  geom_point() +
-  geom_abline(
-    slope = 1,
-    intercept = 0,
-    linetype = 2
-  ) +
-  coord_equal() +
-  labs(
-    title = "Held-out Calibration",
-    x = "Mean predicted probability",
-    y = "Observed default rate",
-    size = "Loans"
-  )
-```
-
-
-### Calibration Intercept and Slope
-
-The grouped calibration plot provides a visual diagnostic. Two additional summaries are estimated on the locked test set. A calibration intercept near 0 indicates correct average risk, while a calibration slope near 1 indicates that the spread of predicted risks is appropriate.
-
-```{r calibration-intercept-slope}
-lp_test <- qlogis(clip_p(p_test))
-
-cal_intercept_fit <- glm(
-  y_test ~ 1,
-  offset = lp_test,
-  family = binomial()
-)
-
-cal_slope_fit <- glm(
-  y_test ~ lp_test,
-  family = binomial()
-)
-
-calibration_summary <- data.frame(
-  Quantity = c(
-    "Calibration-in-the-large intercept",
-    "Calibration model intercept",
-    "Calibration slope"
-  ),
-  Estimate = c(
-    unname(coef(cal_intercept_fit)[1]),
-    unname(coef(cal_slope_fit)[1]),
-    unname(coef(cal_slope_fit)["lp_test"])
-  ),
-  Reference = c(0,0,1)
-)
-
-paper_kable(
-  calibration_summary |>
-    mutate(Estimate = round(Estimate, 4)),
-  caption = "Calibration intercept and slope on the locked test set."
-)
-```
-
-These quantities should be interpreted together with the calibration curve and Brier/log-loss results rather than as stand-alone pass/fail tests.
-
-
-## Risk Stratification
-
-```{r risk-deciles}
-risk_test <- data.frame(
-  y = y_test,
-  p = p_test
-) |>
-  arrange(p) |>
-  mutate(
-    Decile = ntile(p, 10)
-  ) |>
-  group_by(Decile) |>
-  summarise(
-    N = n(),
-    MeanPredicted = mean(p),
-    ObservedDefaultRate = mean(y),
-    Defaults = sum(y),
-    .groups = "drop"
-  ) |>
-  arrange(Decile)
-
-total_defaults <- sum(risk_test$Defaults)
-
-risk_test <- risk_test |>
-  mutate(
-    ShareOfDefaults = Defaults / total_defaults
-  )
-
-paper_kable(
-  risk_test |>
-    mutate(
-      MeanPredicted = round(MeanPredicted, 4),
-      ObservedDefaultRate = round(ObservedDefaultRate, 4),
-      ShareOfDefaults = round(ShareOfDefaults, 4)
-    ),
-  caption = "Observed outcomes across predicted-risk deciles."
-)
-```
-
-```{r risk-decile-plot, fig.width=5.8, fig.height=3.6, out.width='78%'}
-ggplot(
-  risk_test,
-  aes(
-    x = factor(Decile),
-    y = ObservedDefaultRate
-  )
-) +
-  geom_col() +
-  labs(
-    title = "Observed Default Rate by Predicted-Risk Decile",
-    x = "Predicted-risk decile",
-    y = "Observed default rate"
-  )
-```
-
-## Predictor Reliance
-
-Permutation importance evaluates how much validation log loss increases when one predictor is randomly disrupted.
-
-This measures **predictive reliance**, not causal effect.
-
-```{r permutation-importance}
-selected_model_cached <- models[[selected_name]]
-
-# Rebuild selected prediction rule from cached model objects.
-predict_selected_raw <- function(newx) {
-
-  if (selected_name == "logistic") {
-    return(
-      clip_p(
-        predict(
-          selected_model_cached$fit,
-          newdata = newx,
-          type = "response"
-        )
-      )
-    )
-  }
-
-  if (selected_name == "ridge") {
-    return(
-      clip_p(
-        as.numeric(
-          predict(
-            selected_model_cached$fit,
-            newx = as.matrix(newx),
-            s = "lambda.min",
-            type = "response"
-          )
-        )
-      )
-    )
-  }
-
-  if (selected_name == "random_forest") {
-    return(
-      clip_p(
-        predict(
-          selected_model_cached$fit,
-          data = newx,
-          num.threads = 1
-        )$predictions[, "default"]
-      )
-    )
-  }
-
-  if (selected_name == "boosting") {
-    return(
-      clip_p(
-        predict(
-          selected_model_cached$fit,
-          newdata = newx,
-          n.trees = 600,
-          type = "response"
-        )
-      )
-    )
-  }
-
-  if (selected_name == "neural_network") {
-    return(
-      clip_p(
-        as.numeric(
-          predict(
-            selected_model_cached$fit,
-            as.matrix(newx),
-            verbose = 0
-          )
-        )
-      )
-    )
-  }
-
-  stop("Unknown selected model.")
-}
-
-selected_calibrator_fit <- if (
-  selected_calibration == "platt"
-) {
-  calibrators[[selected_name]]
-} else {
-  NULL
-}
-
-predict_selected <- function(newx) {
-  p <- predict_selected_raw(newx)
-
-  if (!is.null(selected_calibrator_fit)) {
-    p <- apply_platt(selected_calibrator_fit, p)
-  }
-
-  clip_p(p)
-}
-
-base_loss <- logloss(y_val, predict_selected(X_val))
-
-set.seed(params$seed)
-
-importance_rows <- lapply(
-  base_features,
-  function(feature) {
-
-    altered_raw <- X_raw[ids$validation, , drop = FALSE]
-
-    altered_raw[[feature]] <- sample(
-      altered_raw[[feature]],
-      nrow(altered_raw)
-    )
-
-    # Recompute ratio when one of its constituents changes.
-    if (feature %in% c("Income","LoanAmount")) {
-      altered_raw$LoanToAnnualIncome <- ifelse(
-        altered_raw$Income > 0,
-        altered_raw$LoanAmount / altered_raw$Income,
-        NA_real_
-      )
-    }
-
-    altered_baked <- as.data.frame(
-      recipes::bake(
-        rec,
-        new_data = altered_raw
-      )
-    )
-
-    loss <- logloss(
-      y_val,
-      predict_selected(altered_baked)
-    )
-
-    data.frame(
-      Feature = feature,
-      IncreaseInLogLoss = loss - base_loss
-    )
-  }
-)
-
-importance <- do.call(rbind, importance_rows) |>
-  arrange(desc(IncreaseInLogLoss))
-
-paper_kable(
-  importance |>
-    mutate(
-      IncreaseInLogLoss = round(IncreaseInLogLoss, 5)
-    ),
-  caption = "Validation permutation importance."
-)
-```
-
-```{r importance-plot, fig.width=5.8, fig.height=4.0, out.width='78%'}
-ggplot(
-  importance,
-  aes(
-    x = reorder(Feature, IncreaseInLogLoss),
-    y = IncreaseInLogLoss
-  )
-) +
-  geom_col() +
-  coord_flip() +
-  labs(
-    title = "Predictive Reliance on Validation Data",
-    x = NULL,
-    y = "Increase in validation log loss"
-  )
-```
-
-## Age-Related Subgroup and Sensitivity Diagnostics
-
-Previous analysis found that Age can be highly influential. Therefore, Age is examined separately as a diagnostic rather than interpreted causally.
-
-```{r age-group-diagnostic}
-age_test <- data.frame(
-  Age = loans$Age[ids$test],
-  y = y_test,
-  p = p_test
-)
-
-age_test$AgeGroup <- cut(
-  age_test$Age,
-  breaks = c(17,24,29,34,39,44,49,54,59,64,Inf),
-  labels = c(
-    "18-24","25-29","30-34","35-39","40-44",
-    "45-49","50-54","55-59","60-64","65+"
-  )
-)
-
-age_diag <- age_test |>
-  group_by(AgeGroup) |>
-  summarise(
-    Loans = n(),
-    Defaults = sum(y == 1),
-    NonDefaults = sum(y == 0),
-    ObservedDefaultRate = mean(y),
-    MeanPredictedRisk = mean(p),
-    FlaggedRate = mean(p >= selected_threshold),
-    Recall = {
-      TP <- sum(p >= selected_threshold & y == 1)
-      FN <- sum(p < selected_threshold & y == 1)
-      if ((TP + FN) > 0) TP / (TP + FN) else NA_real_
-    },
-    Specificity = {
-      TN <- sum(p < selected_threshold & y == 0)
-      FP <- sum(p >= selected_threshold & y == 0)
-      if ((TN + FP) > 0) TN / (TN + FP) else NA_real_
-    },
-    CalibrationGap = mean(y) - mean(p),
-    .groups = "drop"
-  )
-
-age_diag_display <- age_diag |>
-  mutate(
-    ObservedDefaultRate = round(ObservedDefaultRate, 4),
-    MeanPredictedRisk = round(MeanPredictedRisk, 4),
-    FlaggedRate = round(FlaggedRate, 4),
-    Recall = round(Recall, 4),
-    Specificity = round(Specificity, 4),
-    CalibrationGap = round(CalibrationGap, 4)
-  )
-
-paper_kable(
-  age_diag_display |>
-    select(
-      AgeGroup, Loans, Defaults,
-      ObservedDefaultRate, MeanPredictedRisk,
-      CalibrationGap
-    ),
-  caption = "Age-group observed risk and calibration diagnostic on the held-out test set."
-)
-
-paper_kable(
-  age_diag_display |>
-    select(
-      AgeGroup, FlaggedRate,
-      Recall, Specificity
-    ),
-  caption = "Age-group classification behavior at the selected review threshold."
-)
-```
-
-```{r age-calibration-plot, fig.width=5.8, fig.height=3.4, out.width='78%'}
-age_long <- age_diag |>
-  select(
-    AgeGroup,
-    ObservedDefaultRate,
-    MeanPredictedRisk
-  ) |>
-  pivot_longer(
-    -AgeGroup,
-    names_to = "Measure",
-    values_to = "Rate"
-  )
-
-ggplot(
-  age_long,
-  aes(
-    x = AgeGroup,
-    y = Rate,
-    group = Measure,
-    linetype = Measure
-  )
-) +
-  geom_line(linewidth = 0.8) +
-  geom_point() +
-  labs(
-    title = "Observed and Predicted Risk by Age Group",
-    x = "Age group",
-    y = "Rate",
-    linetype = NULL
-  )
-```
-
-Large differences across age groups should be treated as a model diagnostic requiring interpretation and, where appropriate, sensitivity analysis. They are not evidence that Age has a causal effect on default.
-
-
-The age-group table is a **limited subgroup diagnostic**, not a formal fairness determination. Age is strongly associated with the model score in these data, so differences in observed risk, calibration, recall, specificity, and flagging are reported transparently. A complete fairness audit would require a clear legal and decision context, additional protected-group variables, appropriate fairness definitions, and analysis of the consequences of the decision rule.
-
-
-## Separate Validation / Stress Test
-
-```{r separate-validation, results='asis'}
-if (file.exists(params$validation_path)) {
-
-  validation_data <- read.csv(
-    params$validation_path,
-    stringsAsFactors = FALSE,
+  tab <- data.frame(
+    Shift = unname(shift_names[endpoint$shift_type]),
+    Method = unname(method_names[endpoint$method]),
+    `Log loss` = endpoint$mean_log_loss,
+    Brier = endpoint$mean_brier,
+    `ROC-AUC` = endpoint$mean_auc,
     check.names = FALSE
   )
-
-  if (all(c(base_features, "Default") %in% names(validation_data))) {
-
-    val_new_raw <- prepare_inputs(validation_data)
-
-    val_new_baked <- as.data.frame(
-      recipes::bake(
-        rec,
-        new_data = val_new_raw
-      )
-    )
-
-    p_new <- predict_selected(val_new_baked)
-    y_new <- as.integer(validation_data$Default)
-
-    new_prob <- probability_metrics(y_new, p_new)
-    new_class <- class_metrics(
-      y_new,
-      p_new,
-      selected_threshold
-    )
-
-    new_summary <- cbind(
-      N = length(y_new),
-      DefaultRate = mean(y_new),
-      new_prob,
-      new_class
-    )
-
-    new_display <- new_summary |>
-      mutate(
-        across(
-          where(is.numeric),
-          ~ round(.x, 4)
-        )
-      )
-
-    cat("\n\n")
-    print(
-      paper_kable(
-        new_display |>
-          select(
-            N, DefaultRate, LogLoss,
-            Brier, ROC_AUC, PR_AUC
-          ),
-        caption = "Probability performance on the separate stress-test data."
-      )
-    )
-
-    cat("\n\n")
-    print(
-      paper_kable(
-        new_display |>
-          select(
-            Threshold, Recall, Precision,
-            Specificity, FalsePositiveRate,
-            FlaggedRate, Accuracy
-          ),
-        caption = "Operating characteristics on the separate stress-test data."
-      )
-    )
-
-    cat(
-      "\n\nThe additional validation file is used as a stress test. ",
-      "Its synthetic construction means that it does not constitute independent external validation. ",
-      "It is included to examine how the fixed model behaves under a deliberately shifted population.\n\n"
-    )
-
-  } else {
-    cat(
-      "The separate validation file exists but does not contain the full required predictor set and Default label."
-    )
-  }
-
-} else {
-  cat(
-    "No separate validation file was found. The analysis therefore reports internal held-out validation and testing only."
+  knitr::kable(
+    tab,
+    format = "latex",
+    booktabs = TRUE,
+    digits = 4,
+    caption = "Adaptation performance at the strongest shift condition from each experiment. Lower log loss and Brier score are better; higher ROC-AUC indicates stronger discrimination."
   )
 }
 ```
 
+## Discrimination
 
-
-## Predictive Stability Under Controlled Distribution Shift
-
-The empirical results above establish the internally validated baseline. The following results examine what happens to the same statistical properties when the deployment distribution is deliberately changed.
-
-### Covariate shift under correct specification
-
-Under the correctly specified logistic model, raw log loss increases as \(\delta\) increases, but the oracle loss increases almost identically because the event distribution and composition of the deployment population also change.
-
-```{r shift-correct-spec-table}
-shift_correct <- data.frame(
-  delta = c(0,0.5,1,1.5,2),
-  event_rate = c(.1201204,.1623476,.2141752,.2758440,.3461644),
-  model_log_loss = c(.3169038,.3811773,.4444422,.5025753,.5498226),
-  oracle_log_loss = c(.3164975,.3805876,.4436485,.5015168,.5483225),
-  excess_log_loss = c(.0004063,.0005897,.0007937,.0010585,.0015001),
-  model_brier = c(.09337461,.11753734,.14235274,.16590170,.18554562),
-  oracle_brier = c(.09326659,.11734461,.14205723,.16548040,.18491982),
-  probability_mse = c(.0001154,.0001827,.0002856,.0004310,.0006202)
-)
-paper_kable(shift_correct, digits=4,
-             caption="Pure covariate shift under correct model specification.")
+```{r fig-adaptation-auc, fig.cap="Discrimination after distribution shift and adaptation. Score recalibration does not fully recover discrimination lost after structural change."}
+plot_probability("mean_auc", "mcse_auc", "Mean ROC-AUC") + geom_hline(yintercept=.5,linetype="dotted",colour="grey50")
 ```
 
-Probability MSE remains small, increasing from approximately 0.00012 to 0.00062. The fitted model therefore remains close to the oracle even as the population changes substantially. This control condition shows that raw predictive loss should not be interpreted without considering the changing deployment problem itself.
+Recalibration has little effect on discrimination under intercept shift because the ordering induced by the original score remains useful. The strongest contrast occurs under predictor-effect shift. At \(\kappa=1.6\), the unadapted model has mean ROC-AUC 0.4719. Intercept-and-slope recalibration raises mean ROC-AUC to 0.5260, while deployment refitting reaches 0.7627.
 
-### Covariate shift exposes model misspecification
+The partial AUC recovery from intercept-and-slope recalibration is possible because the fitted recalibration slope can reverse the direction of the old score. It cannot, however, separately revise the coefficients of the individual predictors. Deployment refitting can estimate the changed multivariable relationship and therefore recovers substantially more discrimination.
 
-When the true outcome mechanism contains an omitted quadratic term, the effect of covariate shift changes substantially.
+## Calibration instability under severe structural change
 
-```{r shift-misspec-table}
-shift_misspec <- data.frame(
-  beta4=rep(c(0,.25,.50),each=5),
-  delta=rep(c(0,.5,1,1.5,2),3),
-  event_rate=c(
-    .1199140,.1622352,.2138992,.2758176,.3455884,
-    .1203524,.1778836,.2634096,.3756868,.5063260,
-    .1200520,.1881532,.2954800,.4349040,.5908256),
-  probability_mse=c(
-    .0001101,.0001735,.0002743,.0004222,.0006156,
-    .0011548,.0025585,.0058773,.0118930,.0206164,
-    .0043014,.0079675,.0163664,.0293055,.0442197),
-  excess_log_loss=c(
-    .0004141,.0005302,.0007506,.0010641,.0015018,
-    .0052946,.0072391,.0146766,.0301216,.0539815,
-    .0220819,.0239697,.0435808,.0778375,.1224249),
-  excess_brier=c(
-    .0001123,.0001690,.0002790,.0004234,.0006289,
-    .0011949,.0025778,.0058386,.0119148,.0205772,
-    .0043277,.0079292,.0164331,.0292433,.0441432)
-)
-paper_kable(shift_misspec, digits=4,
-             caption="Probability deterioration under covariate shift and model misspecification.")
+At the strongest predictor-effect shift (\(\kappa=1.6\)), test-sample calibration coefficients after intercept-and-slope recalibration varied widely across the 500 replications. The mean intercept and slope were -38.24 and -17.97, whereas their medians were -0.049 and 0.969. A diagnostic rerun reproduced the original adaptation results and showed that the extreme coefficients occurred when the adaptation recalibration slope was close to zero, leaving very little variation in the updated test scores.
+
+For example, replication 251 had an adaptation slope of 0.00001586 and a standard deviation of 0.00001690 for the updated test log-odds scores. The subsequent test-calibration fit converged but produced an intercept of -19,243.45 and a slope of -9,547.42. Across this condition, 13 of 500 replications had absolute test-calibration slopes greater than 10; all 13 had absolute adaptation slopes below 0.01515. All recorded test-calibration fits converged, so convergence alone did not establish stable calibration estimates.
+
+These results show why the arithmetic means should not be interpreted as typical calibration performance. The near-ideal medians also conceal substantial variation and do not establish satisfactory overall performance. Calibration coefficients should therefore be interpreted alongside their distributions, probability loss, Brier score, and discrimination. All replications were retained.
+
+## Decision-threshold adaptation
+
+```{r fig-threshold-adaptation, fig.cap="Benefit of adapting the decision threshold. Points show gain in balanced accuracy relative to retaining the baseline threshold."}
+d <- read.csv("data/adaptation_threshold_summary.csv")
+d$Condition <- factor(d$shift_type,levels=names(shift_labels),labels=unname(shift_labels))
+ggplot(d,aes(shift_value,mean_BA_gain)) +
+ geom_hline(yintercept=0,linetype="dotted",colour="grey50") +
+ geom_line(colour="#D55E00",linewidth=.65) + geom_point(colour="#D55E00",size=2) +
+ geom_errorbar(aes(ymin=mean_BA_gain-1.96*mcse_BA_gain,ymax=mean_BA_gain+1.96*mcse_BA_gain),width=0,colour="#D55E00") +
+ facet_wrap(~Condition,ncol=3,scales="free_x") +
+ labs(x="Magnitude of distribution shift",y="Balanced accuracy gain",
+ caption="Bars: approximate 95% Monte Carlo intervals; 500 replications per condition.") + paper_theme()
 ```
 
-At \(\delta=2\), probability MSE is approximately 0.00062 under correct specification but approximately 0.04422 under strong misspecification. The shift therefore magnifies an approximation error that is much smaller near the development population.
+Threshold adaptation produces its largest benefit under covariate shift with misspecification. At the strongest condition, the mean baseline threshold is 0.1598 and the adapted threshold is 0.3940. Mean balanced accuracy rises from 0.6555 to 0.8031, a gain of 0.1475 with Monte Carlo standard error approximately 0.00113.
 
-The calibration and discrimination results reveal a second feature.
+Under the strongest intercept shift, threshold adaptation yields only a small balanced-accuracy gain of approximately 0.0025. Under the strongest predictor-effect shift, the gain is approximately 0.0120, while balanced accuracy remains near 0.494. A threshold can change the operating point of an existing score, but it cannot recover ranking information that the score no longer contains.
 
-```{r shift-calibration-discrimination-table}
-shift_caldisc <- data.frame(
- beta4=rep(c(0,.25,.50),each=5),
- delta=rep(c(0,.5,1,1.5,2),3),
- model_auc=c(.7624,.7597,.7579,.7556,.7537,
-             .7829,.8077,.8228,.8339,.8437,
-             .7873,.8420,.8651,.8771,.8883),
- oracle_auc=c(.7629,.7602,.7584,.7561,.7541,
-              .7892,.8116,.8278,.8413,.8540,
-              .8174,.8530,.8753,.8904,.9044),
- cal_intercept=c(.0043,.0045,.0091,.0104,.0094,
-                 .0077,.2285,.4101,.5682,.7188,
-                 -.0077,.4661,.7711,1.0009,1.2132),
- cal_slope=c(1.0014,.9992,1.0021,1.0022,.9999,
-             1.0044,1.1495,1.2682,1.3695,1.4559,
-             .9918,1.3171,1.5401,1.6905,1.8097),
- probability_mse=c(.0001153,.0001825,.0002852,.0004305,.0006193,
-                   .0011231,.0025356,.0057941,.0118162,.0204316,
-                   .0042941,.0079142,.0162069,.0291789,.0439657)
-)
-paper_kable(shift_caldisc, digits=4,
-             caption="Discrimination and calibration under covariate shift.")
-```
+# Failure--Response Framework
 
-Under strong misspecification, model ROC-AUC increases from approximately 0.787 to 0.888 as \(\delta\) moves from 0 to 2, while probability MSE increases from approximately 0.0043 to 0.0440 and the calibration slope increases from approximately 0.99 to 1.81. The deployment population becomes easier to rank while the numerical probabilities become less accurate.
+The simulation results suggest a mechanism-based interpretation of model maintenance. The framework is descriptive rather than a universal diagnostic rule: similar empirical symptoms can arise from multiple underlying causes, and observed deployment data should be investigated directly.
 
-### Decision-threshold stability
+Table: Failure--response framework linking observed predictive patterns to plausible statistical changes and adaptation responses.
 
-The optimal balanced-accuracy threshold moves systematically with the deployment population.
+| Observed pattern | Plausible statistical change | Response and evidence basis |
+|---|---|---|
+| Calibration intercept drifts while ranking remains stable | Baseline-risk/intercept shift | Intercept recalibration |
+| Probability scale is distorted but score remains informative | Possible calibration-scale change; not isolated as a separate shift experiment here | Intercept-and-slope recalibration; established updating rationale, with partial repair observed in the present experiments |
+| Predictor population changes and misspecification becomes consequential | Change in \(P(X)\) interacting with model approximation error | Reweighting, recalibration, and possible refitting/redevelopment |
+| Discrimination deteriorates because predictor effects change | Structural change in \(P(Y\mid X)\) | Deployment refitting or model redevelopment |
+| Probability model remains useful but operating performance changes | Decision environment/population change | Threshold reassessment |
 
-```{r shift-threshold-data}
-shift_threshold <- data.frame(
- beta4=rep(c(0,.25,.50),each=5),
- delta=rep(c(0,.5,1,1.5,2),3),
- baseline_threshold=c(rep(.1222,5),rep(.1374,5),rep(.1600,5)),
- shifted_threshold=c(.1232,.1640,.2156,.2752,.3468,
-                     .1379,.1927,.2585,.3264,.3948,
-                     .1605,.2142,.2741,.3329,.3954),
- threshold_change=c(.00091,.04176,.09335,.15290,.22456,
-                    .00045,.05525,.12110,.18903,.25741,
-                    .00054,.05423,.11419,.17291,.23540),
- frozen_BA=c(.6912,.6808,.6518,.6159,.5794,
-             .7112,.7187,.6949,.6549,.6130,
-             .7285,.7558,.7379,.6993,.6560),
- adapted_BA=c(.6911,.6911,.6879,.6866,.6850,
-              .7111,.7325,.7446,.7527,.7610,
-              .7284,.7675,.7843,.7930,.8033),
- BA_gain=c(-.00018,.01026,.03603,.07068,.10554,
-           -.00006,.01374,.04969,.09777,.14795,
-           -.00013,.01177,.04644,.09377,.14724),
- mcse_threshold_change=c(.0009970,.0010493,.0011887,.0013209,.0015066,
-                         .0010914,.0011807,.0012064,.0013443,.0014906,
-                         .0011857,.0011820,.0011874,.0013004,.0014879),
- mcse_BA_gain=c(.0002895,.0004548,.0006692,.0007821,.0007477,
-                .0002347,.0004996,.0007819,.0009260,.0009506,
-                .0002045,.0004544,.0008257,.0010397,.0011392)
-)
-
-threshold_plot_data <- shift_threshold |>
- dplyr::mutate(
-   condition=factor(beta4, levels=c(0,.25,.50),
-   labels=c("Correct specification","Moderate misspecification","Strong misspecification"))
- )
-
-ggplot(threshold_plot_data,
-       aes(x=delta,y=shifted_threshold,linetype=condition,shape=condition))+
- geom_line(linewidth=.8)+
- geom_point(size=2.7)+
- scale_x_continuous(breaks=c(0,.5,1,1.5,2))+
- labs(
-   title="Optimal Decision Thresholds Under Covariate Shift",
-   subtitle="Thresholds maximizing balanced accuracy across deployment populations",
-   x=expression(paste("Magnitude of covariate shift (",delta,")")),
-   y="Estimated optimal threshold",
-   linetype=NULL,shape=NULL
- )+
- theme(legend.position="bottom",plot.title=element_text(face="bold"))
-```
-
-```{r shift-threshold-table}
-threshold_display <- shift_threshold |>
-  transmute(
-    `beta4` = beta4,
-    `delta` = delta,
-    `Baseline threshold` = baseline_threshold,
-    `Shifted threshold` = shifted_threshold,
-    `Threshold change` = threshold_change,
-    `Frozen BA` = frozen_BA,
-    `Adapted BA` = adapted_BA,
-    `BA gain` = BA_gain
-  )
-
-paper_kable(
-  threshold_display,
-  digits = 4,
-  caption = "Decision-threshold movement and balanced-accuracy performance under covariate shift."
-)
-```
-
-Even under correct specification, the mean optimal threshold rises from approximately 0.122 at baseline to 0.347 at \(\delta=2\). Under strong misspecification, the threshold rises from approximately 0.160 to 0.395. At \(\delta=2\), the frozen threshold produces mean balanced accuracy of approximately 0.656 compared with approximately 0.803 after threshold adaptation, a gain of approximately 0.147 with MCSE approximately 0.00114.
-
-### Intercept outcome shift: calibration can fail while ranking remains stable
-
-```{r shift-intercept-data}
-shift_intercept <- data.frame(
- gamma=c(0,.25,.50,.75,1),
- event_rate=c(.119813,.145332,.173938,.206933,.242880),
- model_auc=c(.762216,.760635,.758814,.757014,.756428),
- oracle_auc=c(.762693,.761109,.759335,.757490,.756924),
- auc_gap=c(.0004777,.0004740,.0005212,.0004760,.0004969),
- cal_intercept=c(.001893,.259570,.503086,.753589,1.005151),
- mcse_cal_intercept=c(.0057779,.0056823,.0058504,.0056817,.0055904),
- cal_slope=c(1.00153,1.00297,1.00066,1.00037,1.00276),
- mcse_cal_slope=c(.0031230,.0030244,.0029529,.0028854,.0029063),
- probability_mse=c(.0001099,.0010454,.0042315,.0103535,.0200985),
- excess_log_loss=c(.0004138,.0038023,.0148087,.0356018,.0674526)
-)
-
-intercept_plot <- rbind(
- data.frame(gamma=shift_intercept$gamma,parameter="Calibration intercept",
-            estimate=shift_intercept$cal_intercept,theory=shift_intercept$gamma),
- data.frame(gamma=shift_intercept$gamma,parameter="Calibration slope",
-            estimate=shift_intercept$cal_slope,theory=1)
-)
-
-ggplot(intercept_plot,aes(x=gamma,y=estimate))+
- geom_line(linewidth=.8)+geom_point(size=2.7)+
- geom_line(aes(y=theory),linetype="dashed",linewidth=.6)+
- facet_wrap(~parameter,scales="free_y")+
- labs(
-   title="Calibration Under Intercept Outcome Shift",
-   subtitle="Simulation estimates closely follow the theoretical relationship",
-   x=expression(paste("Intercept shift (",gamma,")")),
-   y="Calibration parameter"
- )+
- theme(plot.title=element_text(face="bold"))
-```
-
-```{r shift-intercept-table}
-intercept_display_a <- shift_intercept |>
-  transmute(
-    `Intercept shift (gamma)` = gamma,
-    `Event rate` = event_rate,
-    `Model AUC` = model_auc,
-    `Oracle AUC` = oracle_auc,
-    `AUC gap` = auc_gap
-  )
-
-intercept_display_b <- shift_intercept |>
-  transmute(
-    `Intercept shift (gamma)` = gamma,
-    `Calibration intercept` = cal_intercept,
-    `MCSE: intercept` = mcse_cal_intercept,
-    `Calibration slope` = cal_slope,
-    `MCSE: slope` = mcse_cal_slope,
-    `Probability MSE` = probability_mse,
-    `Excess log loss` = excess_log_loss
-  )
-
-paper_kable(
-  intercept_display_a,
-  digits = 4,
-  caption = "Intercept outcome shift: event rate and discrimination."
-)
-
-paper_kable(
-  intercept_display_b,
-  digits = 4,
-  caption = "Intercept outcome shift: calibration and probability accuracy."
-)
-```
-
-The calibration intercept closely tracks the imposed value of \(\gamma\), while the calibration slope remains approximately one. At \(\gamma=1\), the mean calibration intercept is approximately 1.005 and the mean slope is approximately 1.003. Probability MSE rises from approximately 0.00011 to 0.02010, yet the model--oracle AUC gap remains about 0.0005. The model therefore retains ranking information while its absolute probabilities become systematically wrong.
-
-### Slope outcome shift: changing relationships damage discrimination
-
-```{r shift-slope-data, fig.width=6.2, fig.height=2.7, out.width='82%'}
-shift_slope <- data.frame(
- kappa=c(0,.4,.8,1.2,1.6),
- beta1_deploy=c(.8,.4,0,-.4,-.8),
- event_rate=c(.119914,.120062,.119949,.120147,.119555),
- model_auc=c(.762221,.701035,.627143,.547180,.472702),
- mcse_model_auc=c(.0004408,.0005203,.0005988,.0007053,.0007873),
- oracle_auc=c(.762700,.712447,.689764,.712565,.763847),
- auc_gap=c(.0004784,.0114121,.0626206,.1653852,.2911447),
- mcse_auc_gap=c(.00003947,.0002192,.0005502,.0007657,.0009282),
- cal_intercept=c(.001858,-.490274,-1.041697,-1.628276,-2.218625),
- cal_slope=c(1.001569,.718810,.432628,.157376,-.090531),
- probability_mse=c(.0001101,.0019284,.0074812,.0161146,.0267215),
- excess_log_loss=c(.0004141,.0075034,.0311945,.0704843,.1191432),
- mcse_excess_log_loss=c(.00002193,.0001098,.0002416,.0003697,.0005046)
-)
-
-slope_plot <- rbind(
- data.frame(kappa=shift_slope$kappa,series="Original model",auc=shift_slope$model_auc),
- data.frame(kappa=shift_slope$kappa,series="Oracle",auc=shift_slope$oracle_auc)
-)
-
-ggplot(slope_plot,aes(x=kappa,y=auc,linetype=series,shape=series))+
- geom_hline(yintercept=.5,linetype="dotted")+
- geom_line(linewidth=.8)+geom_point(size=2.7)+
- scale_x_continuous(breaks=c(0,.4,.8,1.2,1.6))+
- labs(
-   title="Discrimination Under Slope Outcome Shift",
-   subtitle="The original model becomes increasingly misaligned while the oracle remains informative",
-   x=expression(paste("Magnitude of slope shift (",kappa,")")),
-   y="ROC-AUC",linetype=NULL,shape=NULL
- )+
- theme(legend.position="bottom",plot.title=element_text(face="bold"))
-```
-
-```{r shift-slope-table}
-slope_display_a <- shift_slope |>
-  transmute(
-    `Slope shift (kappa)` = kappa,
-    `Deployment beta1` = beta1_deploy,
-    `Event rate` = event_rate,
-    `Model AUC` = model_auc,
-    `MCSE: model AUC` = mcse_model_auc,
-    `Oracle AUC` = oracle_auc,
-    `AUC gap` = auc_gap,
-    `MCSE: AUC gap` = mcse_auc_gap
-  )
-
-slope_display_b <- shift_slope |>
-  transmute(
-    `Slope shift (kappa)` = kappa,
-    `Calibration intercept` = cal_intercept,
-    `Calibration slope` = cal_slope,
-    `Probability MSE` = probability_mse,
-    `Excess log loss` = excess_log_loss,
-    `MCSE: excess log loss` = mcse_excess_log_loss
-  )
-
-paper_kable(
-  slope_display_a,
-  digits = 4,
-  caption = "Slope outcome shift: discrimination."
-)
-
-paper_kable(
-  slope_display_b,
-  digits = 4,
-  caption = "Slope outcome shift: calibration and probability accuracy."
-)
-```
-
-With event prevalence held near 12%, the original model's ROC-AUC falls from approximately 0.762 to 0.473 as the true effect of \(X_1\) weakens and reverses. At the strongest shift, the oracle ROC-AUC is approximately 0.764, producing an AUC gap of approximately 0.291 with MCSE approximately 0.00093. The calibration slope falls from approximately 1.00 to \(-0.09\), probability MSE increases to approximately 0.02672, and excess log loss reaches approximately 0.11914.
-
-The oracle remains informative because the prediction problem itself still contains signal; the original model fails because the relationship it learned is no longer the deployment relationship.
-
-### Integrated result
-
-The experiments do not produce one universal pattern of model deterioration. Covariate shift can expose misspecification and alter operating thresholds; intercept outcome shift can damage calibration while preserving ranking; and slope outcome shift can damage both calibration and discrimination. The common implication is that stable or improving ROC-AUC does not guarantee stable probabilities, calibration, or decision rules.
-
-
-\FloatBarrier
-\clearpage
-
-# Discussion
-
-This study began with a practical loan-default prediction problem but leads to a broader statistical conclusion about predictive inference under distributional change. The empirical analysis establishes a model that performs reasonably well under internal validation. The simulation analysis then shows why that evidence should not be interpreted as proof that the same probabilities, calibration, ranking, or decision threshold will remain appropriate after deployment.
-
-The empirical model-selection exercise is therefore a supporting component rather than the final research question. Raw logistic regression achieved the lowest validation log loss among the candidate models, with performance very close to Platt-calibrated logistic regression. The more flexible random-forest and boosting candidates did not improve probability estimation under the prespecified validation criterion in this dataset. On the locked test set, the selected model achieved ROC-AUC 0.7585, PR-AUC 0.3288, Brier score 0.0908, and log loss 0.3111. Its calibration intercept and slope were close to the ideal values, providing evidence that the probability scale was appropriate for the held-out observations drawn from the same source.
-
-The threshold analysis adds a separate decision layer. Balanced accuracy selected a validation threshold of 0.1175, which produced test recall of approximately 0.684 and specificity of approximately 0.701. This threshold is not an intrinsic property of logistic regression and is not an economically optimal lending cutoff. It is the solution to a particular statistical operating objective under the validation population.
-
-The covariate-shift experiments explain why internal success may not transfer unchanged to deployment. When the conditional logistic model was correctly specified, moving the distribution of \(X_1\) produced only small excess probability error relative to the oracle. This is an important control result: a change in \(P(X)\) does not automatically invalidate a correct model of \(P(Y\mid X)\). Raw loss can increase simply because the composition and event distribution of the population have changed.
-
-The result changes when the fitted model is misspecified. Omitting a quadratic effect creates an approximation error that is relatively modest near the development distribution but becomes much larger as deployment moves toward regions where the omitted curvature matters more. This demonstrates an interaction between covariate shift and model misspecification rather than a universal failure of logistic regression under shift.
-
-The same experiment also demonstrates why discrimination should not be treated as a complete measure of predictive validity. Under strong misspecification, ROC-AUC increased as covariate shift became stronger even though probability MSE and calibration error deteriorated substantially. The deployment population became easier to rank, but the numerical probabilities became less trustworthy. AUC therefore answered the ranking question correctly while failing to reveal a different probability-estimation problem.
-
-The intercept-shift experiment isolates that distinction further. The estimated calibration intercept closely followed the imposed shift, the calibration slope remained near one, and the model--oracle AUC gap remained negligible. The old model continued to rank observations effectively but systematically underestimated the new level of risk. In a setting approximating this structure, recalibration may be sufficient because the ordering information has largely survived.
-
-The slope-shift experiment represents a fundamentally different failure. When the true effect of \(X_1\) weakened and eventually reversed, the original model's ranking deteriorated even though the oracle remained informative. At the strongest shift, the original ROC-AUC fell below 0.50 while the oracle remained near 0.764. This is not a problem that an intercept correction alone can solve because the predictor--outcome relationship itself has changed.
-
-Decision-threshold stability provides a final distinction. Even under correct model specification, the balanced-accuracy-optimal threshold moved substantially after covariate shift. Thus model validity and decision-rule validity are not identical. A model may still estimate useful conditional probabilities while the operating threshold chosen for the development population becomes suboptimal for a new deployment population.
-
-These results change how the empirical loan model should be interpreted. The test-set results establish internal predictive performance under the observed data source. They do not establish that a future borrower population will have the same predictor distribution, baseline default risk, conditional predictor effects, calibration, or optimal review threshold. The simulation does not prove that these shifts occur in the empirical data; rather, it identifies the statistical consequences that would follow if different forms of shift occurred.
-
-For deployment monitoring, the findings argue against relying on ROC-AUC alone. A probability-based risk system should separately monitor input distributions, event prevalence, calibration intercept and slope, probability losses such as Brier score or log loss once outcomes mature, ranking measures, score distributions, review rates, and threshold operating characteristics. The appropriate intervention depends on the observed failure mode. Intercept recalibration, broader recalibration, threshold revision, and complete model redevelopment are statistically different responses to different problems.
-
-The central result can therefore be stated compactly:
+The central implication is
 
 \[
 \boxed{
-\text{Stable discrimination does not guarantee stable probabilities, calibration, or decisions under distribution shift.}
+\text{probability-model repair}
+\neq
+\text{ranking repair}
+\neq
+\text{decision-rule repair}.
 }
 \]
 
-That conclusion is broader than the specific loan dataset. It concerns the deployment of probability models whenever the future population may differ from the population used for development.
+# Discussion
 
-\FloatBarrier
-\clearpage
+The experiments demonstrate that deployment stability cannot be summarized by a single performance measure. Covariate shift, baseline-risk shift, and predictor-effect shift generate different combinations of calibration error, probability loss, discrimination change, and threshold instability.
 
-# Limitations
+The intercept-shift experiment provides the cleanest example of targeted repair and is consistent with the model-updating principle that parsimonious recalibration can be preferable when the original score structure remains useful [@steyerberg2004]. Because the deployment mechanism differs from development primarily through baseline risk, intercept recalibration nearly matches full deployment refitting. Re-estimating the entire model is unnecessary in this controlled setting. The separate supplementary sample-size experiment further shows that intercept recalibration has lower mean log loss than full deployment refitting with 250, 500 and 1,000 adaptation observations. When the changed mechanism can be addressed by a single intercept adjustment, estimating additional coefficients introduces avoidable estimation variability. Under predictor-effect shift and covariate shift with misspecification, deployment refitting instead has the lowest mean log loss among the methods tested at all four adaptation sizes. These comparisons concern the specified supporting design and are not universal sample-size recommendations.
 
-Several limitations constrain interpretation of the empirical and simulation evidence.
+Covariate shift with misspecification produces a different pattern. The conditional mechanism is unchanged, but the development model is an imperfect approximation. As deployment moves toward regions where the omitted nonlinear component matters more, simple recalibration cannot recover all lost probability accuracy. Importance weighting and deployment refitting perform substantially better.
 
-First, the empirical `Default` response has no documented observation horizon. The fitted probabilities therefore concern the recorded default outcome rather than a verified 12-month, lifetime, or regulatory probability of default.
+Predictor-effect shift is more severe because the original risk score itself becomes structurally obsolete. Score recalibration can rescale or reverse that one-dimensional score but cannot separately modify its component predictor effects. Consequently, it partially improves performance but remains far below deployment refitting in discrimination.
 
-Second, the empirical data contain no loan-origination or outcome dates. The train/calibration/validation/test design is stratified rather than chronological, so the study cannot establish performance on a genuinely later origination cohort.
+The threshold experiments reinforce the distinction between statistical prediction and operational decision rules. A model may remain probabilistically meaningful while the threshold that was optimal in the development population becomes unsuitable after population change. Conversely, changing a threshold cannot repair a score whose ranking information has deteriorated.
 
-Third, the data do not contain a borrower identifier that establishes whether the same borrower can appear more than once. The analysis therefore assumes independent loan records. If repeated borrowers exist, borrower-grouped splitting would be necessary.
+For model monitoring, this implies that ROC-AUC alone is insufficient; discrimination and calibration should be evaluated as distinct properties [@steyerberg2010; @vancalster2019]. Deployment assessment should consider changes in the predictor distribution, event prevalence, calibration, discrimination, probability loss where outcomes become available, and the performance of the operating decision rule.
 
-Fourth, the dataset contains no longitudinal repayment history, days-past-due trajectory, recoveries, exposure at default, or loss given default. The empirical model is therefore a binary recorded-default risk model rather than a time-to-default, early-warning, or expected-loss model.
+# Limitations and Future Research
 
-Fifth, the separate validation file is synthetic and functions only as a stress test. It does not constitute genuine external validation and cannot establish transportability to an independent lending population.
+## Limitations
 
-Sixth, balanced accuracy is a statistical threshold objective. The available data do not contain verified costs of false negatives and false positives, review-capacity constraints, revenues, recoveries, EAD, or LGD required to establish an economically optimal threshold.
+The study has several limitations. First, the Monte Carlo experiments are intentionally stylized. They isolate mechanisms rather than reproduce every feature of real credit portfolios. Second, the empirical analysis uses one publicly available loan dataset and does not provide genuine temporal or external validation. Third, the recorded default indicator does not have a documented observation horizon, so empirical estimates are interpreted as probabilities of the recorded outcome rather than formal fixed-horizon probabilities of default.
 
-Seventh, the subgroup analysis is descriptive and incomplete. The available variables do not support a comprehensive fairness audit, and the study does not make a fairness determination.
+Fourth, the adaptation experiments assume access to labeled deployment observations. The amount and timing of labeled data available in practice may materially affect adaptation performance. The supplementary experiment varies the number of labels but does not examine delayed outcomes, selective labeling, or dependence between observations. Its sample-size comparison excludes importance weighting and threshold revision. The supplementary nonlinear mechanism also uses a different intercept setup from the original experiment, so its numerical results should not be pooled with the original results. Fifth, balanced accuracy is used as a statistical threshold objective because verified monetary costs of false positives and false negatives are unavailable. The selected threshold should therefore not be interpreted as economically optimal.
 
-The simulation study is deliberately stylized. It uses three independent normally distributed predictors and logistic data-generating mechanisms so that specific forms of shift can be isolated. Real lending populations may contain correlated predictors, interactions, missingness, policy effects, temporal dependence, and several simultaneous forms of distribution change.
+Finally, the failure-response framework is mechanistic rather than diagnostic. Observing calibration drift or declining AUC in practice does not uniquely identify the data-generating change responsible for it.
 
-The simulated values of \(\delta\), \(\beta_4\), \(\gamma\), and \(\kappa\) are experimental design conditions, not empirical estimates of real credit-market drift. The simulation establishes mechanisms under controlled assumptions; it does not establish that any particular shift occurred in the observed loan dataset.
+## Future research
 
-Finally, the Monte Carlo standard errors quantify simulation precision, not uncertainty about real-world future performance. Genuine claims about deployment transportability require temporal or external data.
+Several extensions follow directly from the present design. The supplementary sample-size experiment examines one aspect of limited deployment labels; broader sample-size designs and regularized updates remain to be investigated. Correlated and heavier-tailed predictors could be introduced to assess robustness beyond the independent Gaussian design. Temporal or external credit data would allow the framework to be evaluated under naturally occurring rather than synthetic distribution shift.
 
-\FloatBarrier
-\clearpage
+Further work could also replace balanced accuracy with explicit asymmetric decision costs, study uncertainty in threshold selection, and develop formal procedures for deciding when a deployed model should be recalibrated, refitted, or replaced.
 
-# Future Research
+# Reproducibility and Data/Code Availability
 
-The most important next step is empirical validation under real distributional change. A dataset with documented origination dates, outcome dates, a defined default horizon, and later-period cohorts would permit direct out-of-time evaluation of calibration, discrimination, and threshold stability. Data from an independent lender or lending environment would provide an even stronger transportability test.
+## Reproducibility
 
-A second extension is adaptation after detected shift. The present study characterizes several failure modes; future work should compare intercept-only recalibration, recalibration of both intercept and slope, threshold revision, importance weighting under covariate shift, and complete model refitting. Each adaptation method should be estimated on a dedicated adaptation sample and evaluated on a separate shifted holdout sample.
+The empirical pipeline was rerun by the author in RStudio with forced retraining, seed 42 and neural-network fitting disabled. Computed validation and test tables in the resulting PDF matched the publication manuscript's principal empirical values at displayed precision. This check compares the rendered results; an independent audit of the saved empirical model objects and input files remains outstanding.
 
-A richer credit-risk application should incorporate longitudinal repayment histories, exposure at default, loss given default, recoveries, review costs, and revenues. Those quantities would allow the operating rule to be chosen using expected loss or utility rather than balanced accuracy.
+The controlled simulations used seed 1998 and 500 replications per condition. The initial script was reconstructed because its original standalone source was not preserved. Table 1 uses retained rerun summaries recalculated from replication-level records. The threshold-stability comparison passed the specified tolerances against the available frozen reference; corresponding reference files for coefficient recovery, intercept shift and predictor-effect shift were unavailable. This establishes partial numerical agreement, not exact reproduction of the original analysis.
 
-Finally, the simulation framework can be extended across sample size, baseline prevalence, signal strength, correlated predictors, alternative nonlinearities, interactions, and simultaneous changes in \(P(X)\) and \(P(Y\mid X)\). Such work would move from illustrating distinct failure mechanisms toward identifying conditions under which particular adaptation strategies are statistically reliable.
+Adaptation summaries were independently recalculated from the supplied raw records. An instrumented rerun supported the calibration-instability explanation in Section 7.4. The two separate supporting experiments used 1,000 replications each. All 399 supporting adaptation-summary checks and 512 sensitivity mean/Monte Carlo standard-error checks agreed within an absolute tolerance of $10^{-11}$. Replication keys were unique, numerical records were finite, and sensitivity success/failure counts matched. Shared test-sample quantities and unchanged-model metrics were consistent across methods and sample sizes. Supporting scripts and settings were supplied, including the recovered adaptation script. These checks verify summaries of replication-level metrics; they do not recompute borrower-level predictions or independently verify execution. Scripts, settings, results and session information are retained locally. The supporting experiments are neither external validation nor exact replications of the original design.
 
-\FloatBarrier
-\clearpage
+## Data availability
 
-# Reproducibility and Software
+The benchmark dataset is publicly available from https://www.kaggle.com/datasets/nikhil1e9/loan-default [@nikhil2023]. The source advertises a CC0: Public Domain license and attributes the dataset to Coursera's Loan Default Prediction Challenge. The original collection process and default observation horizon remain undocumented. A comparison of the supplied CSV with the Kaggle download yielded the same SHA-256 checksum: `1d7556a9071e7f9e872dc05a0cad174229fb1164b1cf3470ad35eed195c24278`. Simulation result files are retained by the author locally and have not been publicly deposited. The synthetic stress-test dataset is not an external validation dataset.
 
-The empirical workflow is implemented in R Markdown with a fixed development design, training-only preprocessing, saved model objects, and a validation-selected threshold. The associated Shiny application uses the same saved probability model, preprocessing recipe, calibration choice, and threshold, and is intended as a research and decision-support interface rather than an automated lending-decision system.
+## Code availability
 
-The distribution-shift experiments use 500 Monte Carlo replications per condition with simulation seed 1998. The manuscript records the frozen simulation summaries and reconstructs the reported tables and figures from those results. Monte Carlo standard errors are reported where they are central to the interpretation.
+The author retains the empirical R Markdown pipeline, reconstructed initial simulation script, adaptation and figure scripts, and verification records. The initial simulation script reconstructs the documented design; it is not the preserved original source. The scripts and results have not yet been deposited in a public repository. Reproducibility checks and their limits are described in Section 11.1.
 
-Code is hidden in the rendered manuscript so that the PDF emphasizes the statistical design, results, and interpretation while the R Markdown source preserves the computational workflow.
+## Use of generative AI
 
-\FloatBarrier
-\clearpage
+ChatGPT was used to assist with R code generation or reconstruction and manuscript drafting. The author developed the research idea, conducted the analyses in RStudio, reviewed the implementation against the intended mathematics and assumptions, and takes responsibility for the manuscript and analysis.
+
 
 # Conclusion
 
-This study evaluates loan-default prediction as a probability-based system that must remain statistically meaningful beyond the development sample. The empirical analysis establishes the internal baseline: raw logistic regression achieved the lowest validation log loss among the candidate models, produced useful held-out discrimination, remained close to ideal calibration, and supported a validation-selected balanced-accuracy threshold of 0.1175.
+Different forms of distribution shift produce different predictive failure modes. Baseline-risk shift can substantially damage probability calibration while preserving ranking and can be repaired efficiently by intercept recalibration. Covariate shift can expose model misspecification, in which case broader adaptation or refitting may be required. Changes in predictor effects can invalidate the original ranking itself, making score recalibration insufficient and favoring model redevelopment.
 
-The central contribution comes from asking what happens to those same properties when the deployment distribution changes. Pure covariate shift produced little excess probability error when the conditional model was correctly specified, but the combination of covariate shift and model misspecification produced substantial calibration and probability deterioration. Intercept outcome shift altered absolute risk while largely preserving ranking. Slope outcome shift changed the predictor--outcome relationship itself and eventually destroyed the original model's discrimination. The operating threshold also moved substantially across deployment populations, including under correct specification.
+The supplementary sample-size results show that the amount of labeled deployment data also matters: simple intercept recalibration performs well with limited data when baseline risk alone changes, whereas broader refitting is required to address changed predictor relationships in the tested conditions. Updating an unchanged model with small samples can worsen average performance.
 
-The broader conclusion is that **distribution shift does not create one universal form of predictive failure**. Different changes in the data-generating process affect different parts of the predictive system. A model can retain or improve discrimination while its probabilities become miscalibrated, remain probabilistically useful while its decision threshold becomes inappropriate, or lose ranking ability when predictor effects change.
+The broader lesson is that internal predictive performance is not evidence of deployment stability. Calibration, discrimination, probability accuracy, and decision-threshold performance are distinct properties, and the appropriate corrective response depends on which property has become unstable.
 
-Accordingly, internal test performance should be treated as evidence about the development environment rather than as proof of future stability. Probability accuracy, calibration, discrimination, and decision performance should be evaluated and monitored as distinct but connected properties of a deployed predictive model.
+
+
+The supporting experimental design, detailed results, figure and table are provided in the separate supplementary document.
 
 \FloatBarrier
-\clearpage
 
 # References {-}
-
-Ayari, H., Guetari, R., & Kraïem, N. (2026). Machine learning powered financial credit scoring: A systematic literature review. *Artificial Intelligence Review, 59*, Article 13. https://doi.org/10.1007/s10462-025-11416-2
-
-Bazzana, F., Bee, M., & Hussin Adam Khatir, A. A. (2024). Machine learning techniques for default prediction: An application to small Italian companies. *Risk Management, 26*, Article 1. https://doi.org/10.1057/s41283-023-00132-2
-
-Das, S., Stanton, R., & Wallace, N. (2023). Algorithmic fairness. *Annual Review of Financial Economics, 15*, 565--593. https://doi.org/10.1146/annurev-financial-110921-125930
-
-Kozodoi, N., Jacob, J., & Lessmann, S. (2022). Fairness in credit scoring: Assessment, implementation and profit implications. *European Journal of Operational Research, 297*(3), 1083--1094. https://doi.org/10.1016/j.ejor.2021.06.023
-
-Montevechi, A. A., Miranda, R. C., Medeiros, A. L., & Montevechi, J. A. B. (2024). Advancing credit risk modelling with Machine Learning: A comprehensive review of the state-of-the-art. *Engineering Applications of Artificial Intelligence, 137*, 109082. https://doi.org/10.1016/j.engappai.2024.109082
-
-Niculescu-Mizil, A., & Caruana, R. (2005). Predicting good probabilities with supervised learning. In *Proceedings of the 22nd International Conference on Machine Learning* (pp. 625--632). https://doi.org/10.1145/1102351.1102430
-
-Steyerberg, E. W., Vickers, A. J., Cook, N. R., Gerds, T., Gonen, M., Obuchowski, N., Pencina, M. J., & Kattan, M. W. (2010). Assessing the performance of prediction models: A framework for traditional and novel measures. *Epidemiology, 21*(1), 128--138. https://doi.org/10.1097/EDE.0b013e3181c30fb2
-
-Quiñonero-Candela, J., Sugiyama, M., Schwaighofer, A., & Lawrence, N. D. (Eds.). (2009). *Dataset Shift in Machine Learning*. MIT Press. https://doi.org/10.7551/mitpress/9780262170055.001.0001
-
-Shimodaira, H. (2000). Improving predictive inference under covariate shift by weighting the log-likelihood function. *Journal of Statistical Planning and Inference, 90*(2), 227--244. https://doi.org/10.1016/S0378-3758(00)00115-4
-
-Wen, J., Yu, C.-N., & Greiner, R. (2014). Robust learning under uncertain test distributions: Relating covariate shift to model misspecification. In *Proceedings of the 31st International Conference on Machine Learning* (Vol. 32, pp. 631--639).

@@ -1,32 +1,15 @@
-# Verification Status
+# Verification status
 
-## Frozen manuscript
-**Status: frozen.** The project manuscript PDF and RMarkdown source are included under `manuscript/`.
+## Publication manuscript
 
-## Empirical analysis
-The manuscript contains the empirical analysis code used for the paper. Re-running it requires the
-original `Loan_default.csv` file with the checksum recorded in `data/DATA_MANIFEST.json`.
+The main manuscript is the supplied 17-page publication PDF from October 5, 2026, with the supplied `paper_publication_FINAL_VERIFIED(4).Rmd` source. Its bibliography and required summary inputs are bundled. The first page, title, page count, and source input paths were checked during upload. The PDF was not freshly knitted and no models were rerun in this environment.
 
-## Monte Carlo simulations
-**Status: reconstructed, awaiting execution verification in R.**
+## Supporting analysis
 
-The original standalone Monte Carlo script was not preserved. `scripts/02_run_simulations.R`
-reconstructs the experiments from the paper's documented:
+The earlier empirical pipeline is retained at `analysis/empirical_pipeline.Rmd`. Historical empirical outputs and initial frozen simulation references are supporting material. The initial Monte Carlo engine was reconstructed; it is not the preserved original standalone source. Its verifier does not establish reproduction of all later adaptation experiments.
 
-- data-generating mechanisms,
-- sample sizes,
-- shift grids,
-- threshold grid,
-- 500-replication design,
-- seed 1998,
-- estimands and performance metrics.
+The publication manuscript describes partial numerical agreement and its limitations. Supplied revision checks are retained in `manuscript/verification/`. Preserve those qualifications when describing this repository.
 
-The frozen manuscript summaries are stored in `results/frozen/`.
+## Environment and inputs
 
-After running the reconstructed simulations, execute:
-
-`Rscript scripts/03_verify_against_frozen.R`
-
-The verifier compares rerun summaries with the frozen results using Monte Carlo-error-aware tolerances.
-
-This package deliberately does **not** claim bit-for-bit reproduction until that verification has been run.
+No original renv lockfile was found. Recorded R session information is supplied. Row-level empirical and validation inputs are omitted from the public repository.

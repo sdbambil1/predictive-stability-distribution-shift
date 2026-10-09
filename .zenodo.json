@@ -1,5 +1,5 @@
 {
-  "title": "Predictive Stability Under Distribution Shift: Calibration, Discrimination, and Decision Thresholds with a Loan-Default Application",
+  "title": "Predictive Stability and Adaptation Under Distribution Shift: Calibration, Discrimination, and Decision Thresholds in Credit-Risk Modeling",
   "upload_type": "software",
   "creators": [
     {
@@ -7,7 +7,7 @@
       "affiliation": "Georgia State University"
     }
   ],
-  "description": "Research code, frozen manuscript, and simulation summaries for a loan-default study of calibration, discrimination, and decision thresholds under distribution shift. The standalone Monte Carlo engine is reconstructed; execution verification is pending. See VERIFICATION_STATUS.md.",
+  "description": "Publication manuscript and research materials for a credit-risk study of calibration, discrimination, and decision thresholds under distribution shift. Includes the supplied 17-page manuscript, R Markdown source, bibliography, adaptation summary data, revision checks, and supporting empirical and reconstructed initial simulation code. See VERIFICATION_STATUS.md for reproducibility limitations. Poster and individual loan records are excluded.",
   "license": "MIT",
   "keywords": [
     "calibration",
@@ -15,7 +15,6 @@
     "decision thresholds",
     "distribution shift",
     "credit risk",
-    "logistic regression",
-    "Monte Carlo simulation"
+    "model adaptation"
   ]
 }

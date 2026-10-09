@@ -1,0 +1,400 @@
+check,max_absolute_difference,passed
+"Mean ('baseline', 'Deployment refit') Average_true_risk",1.3877787807814457e-16,True
+"MCSE ('baseline', 'Deployment refit') Average_true_risk",8.229772115522782e-17,True
+"Mean ('baseline', 'Deployment refit') Average_predicted_risk",2.7755575615628914e-16,True
+"MCSE ('baseline', 'Deployment refit') Average_predicted_risk",7.98514900035574e-17,True
+"Mean ('baseline', 'Deployment refit') Event_rate",0.0,True
+"MCSE ('baseline', 'Deployment refit') Event_rate",2.3201926491189795e-17,True
+"Mean ('baseline', 'Deployment refit') Log_loss",1.6653345369377348e-16,True
+"MCSE ('baseline', 'Deployment refit') Log_loss",4.412702842016003e-17,True
+"Mean ('baseline', 'Deployment refit') Brier",4.163336342344337e-17,True
+"MCSE ('baseline', 'Deployment refit') Brier",3.198396408832238e-17,True
+"Mean ('baseline', 'Deployment refit') PMSE",4.209414934674971e-17,True
+"MCSE ('baseline', 'Deployment refit') PMSE",6.364478510726725e-17,True
+"Mean ('baseline', 'Deployment refit') ROC_AUC",3.3306690738754696e-16,True
+"MCSE ('baseline', 'Deployment refit') ROC_AUC",4.7379634937616544e-17,True
+"Mean ('baseline', 'Intercept + slope recalibration') Average_true_risk",1.3877787807814457e-16,True
+"MCSE ('baseline', 'Intercept + slope recalibration') Average_true_risk",8.229772115522782e-17,True
+"Mean ('baseline', 'Intercept + slope recalibration') Average_predicted_risk",4.163336342344337e-17,True
+"MCSE ('baseline', 'Intercept + slope recalibration') Average_predicted_risk",7.632783294297951e-17,True
+"Mean ('baseline', 'Intercept + slope recalibration') Event_rate",0.0,True
+"MCSE ('baseline', 'Intercept + slope recalibration') Event_rate",2.3201926491189795e-17,True
+"Mean ('baseline', 'Intercept + slope recalibration') Log_loss",1.1102230246251565e-16,True
+"MCSE ('baseline', 'Intercept + slope recalibration') Log_loss",2.7863995832877464e-17,True
+"Mean ('baseline', 'Intercept + slope recalibration') Brier",1.3877787807814457e-17,True
+"MCSE ('baseline', 'Intercept + slope recalibration') Brier",1.0842021724855044e-19,True
+"Mean ('baseline', 'Intercept + slope recalibration') PMSE",3.309527131512002e-17,True
+"MCSE ('baseline', 'Intercept + slope recalibration') PMSE",7.534569824063815e-17,True
+"Mean ('baseline', 'Intercept + slope recalibration') ROC_AUC",6.661338147750939e-16,True
+"MCSE ('baseline', 'Intercept + slope recalibration') ROC_AUC",6.770842567171975e-17,True
+"Mean ('baseline', 'Intercept recalibration') Average_true_risk",1.3877787807814457e-16,True
+"MCSE ('baseline', 'Intercept recalibration') Average_true_risk",8.229772115522782e-17,True
+"Mean ('baseline', 'Intercept recalibration') Average_predicted_risk",1.942890293094024e-16,True
+"MCSE ('baseline', 'Intercept recalibration') Average_predicted_risk",1.168227840853131e-17,True
+"Mean ('baseline', 'Intercept recalibration') Event_rate",0.0,True
+"MCSE ('baseline', 'Intercept recalibration') Event_rate",2.3201926491189795e-17,True
+"Mean ('baseline', 'Intercept recalibration') Log_loss",2.220446049250313e-16,True
+"MCSE ('baseline', 'Intercept recalibration') Log_loss",3.621235256101585e-17,True
+"Mean ('baseline', 'Intercept recalibration') Brier",5.551115123125783e-17,True
+"MCSE ('baseline', 'Intercept recalibration') Brier",7.201812930734963e-17,True
+"Mean ('baseline', 'Intercept recalibration') PMSE",5.502326025363935e-18,True
+"MCSE ('baseline', 'Intercept recalibration') PMSE",9.172053917695829e-17,True
+"Mean ('baseline', 'Intercept recalibration') ROC_AUC",6.661338147750939e-16,True
+"MCSE ('baseline', 'Intercept recalibration') ROC_AUC",6.770842567171975e-17,True
+"Mean ('baseline', 'No adaptation') Average_true_risk",1.3877787807814457e-16,True
+"MCSE ('baseline', 'No adaptation') Average_true_risk",8.229772115522782e-17,True
+"Mean ('baseline', 'No adaptation') Average_predicted_risk",1.1102230246251565e-16,True
+"MCSE ('baseline', 'No adaptation') Average_predicted_risk",1.6859343782149594e-17,True
+"Mean ('baseline', 'No adaptation') Event_rate",0.0,True
+"MCSE ('baseline', 'No adaptation') Event_rate",2.3201926491189795e-17,True
+"Mean ('baseline', 'No adaptation') Log_loss",1.6653345369377348e-16,True
+"MCSE ('baseline', 'No adaptation') Log_loss",7.085261197192771e-17,True
+"Mean ('baseline', 'No adaptation') Brier",2.7755575615628914e-17,True
+"MCSE ('baseline', 'No adaptation') Brier",3.8638254921952164e-17,True
+"Mean ('baseline', 'No adaptation') PMSE",3.40168431617327e-18,True
+"MCSE ('baseline', 'No adaptation') PMSE",7.55413628514539e-17,True
+"Mean ('baseline', 'No adaptation') ROC_AUC",6.661338147750939e-16,True
+"MCSE ('baseline', 'No adaptation') ROC_AUC",6.770842567171975e-17,True
+"Mean ('covariate_misspecification', 'Deployment refit') Average_true_risk",4.440892098500626e-16,True
+"MCSE ('covariate_misspecification', 'Deployment refit') Average_true_risk",6.459134442582393e-17,True
+"Mean ('covariate_misspecification', 'Deployment refit') Average_predicted_risk",2.220446049250313e-16,True
+"MCSE ('covariate_misspecification', 'Deployment refit') Average_predicted_risk",2.5045070184415152e-17,True
+"Mean ('covariate_misspecification', 'Deployment refit') Event_rate",1.1102230246251565e-16,True
+"MCSE ('covariate_misspecification', 'Deployment refit') Event_rate",7.762887554996212e-17,True
+"Mean ('covariate_misspecification', 'Deployment refit') Log_loss",0.0,True
+"MCSE ('covariate_misspecification', 'Deployment refit') Log_loss",5.5348520905385e-17,True
+"Mean ('covariate_misspecification', 'Deployment refit') Brier",2.498001805406602e-16,True
+"MCSE ('covariate_misspecification', 'Deployment refit') Brier",5.147249813874932e-17,True
+"Mean ('covariate_misspecification', 'Deployment refit') PMSE",3.968179951296946e-17,True
+"MCSE ('covariate_misspecification', 'Deployment refit') PMSE",9.334811298510742e-17,True
+"Mean ('covariate_misspecification', 'Deployment refit') ROC_AUC",2.220446049250313e-16,True
+"MCSE ('covariate_misspecification', 'Deployment refit') ROC_AUC",5.4969050145015075e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') Average_true_risk",4.440892098500626e-16,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') Average_true_risk",6.459134442582393e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') Average_predicted_risk",1.1102230246251565e-16,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') Average_predicted_risk",1.702197410802242e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') Event_rate",1.1102230246251565e-16,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') Event_rate",7.762887554996212e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') Log_loss",4.440892098500626e-16,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') Log_loss",8.407987847625087e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') Brier",4.85722573273506e-16,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') Brier",6.873841773558098e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') PMSE",4.445228907190568e-17,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') PMSE",5.2075585597194385e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') ROC_AUC",0.0,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') ROC_AUC",2.2144829373016428e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') Average_true_risk",4.440892098500626e-16,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') Average_true_risk",6.459134442582393e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') Average_predicted_risk",3.3306690738754696e-16,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') Average_predicted_risk",6.488950002325744e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') Event_rate",1.1102230246251565e-16,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') Event_rate",7.762887554996212e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') Log_loss",1.1102230246251565e-16,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') Log_loss",2.4123498337802474e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') Brier",1.6653345369377348e-16,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') Brier",5.445405411308446e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') PMSE",5.204170427930421e-18,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') PMSE",1.2305694657710475e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') ROC_AUC",4.440892098500626e-16,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') ROC_AUC",2.222614453595284e-17,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') Average_true_risk",4.440892098500626e-16,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') Average_true_risk",6.459134442582393e-17,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') Average_predicted_risk",2.220446049250313e-16,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') Average_predicted_risk",1.5449880957918438e-17,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') Event_rate",1.1102230246251565e-16,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') Event_rate",7.762887554996212e-17,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') Log_loss",5.551115123125783e-16,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') Log_loss",9.18861341181465e-17,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') Brier",3.0531133177191805e-16,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') Brier",7.298035873543052e-17,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') PMSE",1.3877787807814457e-17,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') PMSE",5.197394164352387e-17,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') ROC_AUC",4.440892098500626e-16,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') ROC_AUC",2.222614453595284e-17,True
+"Mean ('covariate_misspecification', 'No adaptation') Average_true_risk",4.440892098500626e-16,True
+"MCSE ('covariate_misspecification', 'No adaptation') Average_true_risk",6.459134442582393e-17,True
+"Mean ('covariate_misspecification', 'No adaptation') Average_predicted_risk",3.3306690738754696e-16,True
+"MCSE ('covariate_misspecification', 'No adaptation') Average_predicted_risk",6.581107186987012e-17,True
+"Mean ('covariate_misspecification', 'No adaptation') Event_rate",1.1102230246251565e-16,True
+"MCSE ('covariate_misspecification', 'No adaptation') Event_rate",7.762887554996212e-17,True
+"Mean ('covariate_misspecification', 'No adaptation') Log_loss",3.3306690738754696e-16,True
+"MCSE ('covariate_misspecification', 'No adaptation') Log_loss",1.22514845490862e-17,True
+"Mean ('covariate_misspecification', 'No adaptation') Brier",3.608224830031759e-16,True
+"MCSE ('covariate_misspecification', 'No adaptation') Brier",5.4047478298402396e-17,True
+"Mean ('covariate_misspecification', 'No adaptation') PMSE",2.7755575615628914e-17,True
+"MCSE ('covariate_misspecification', 'No adaptation') PMSE",8.72782748850831e-18,True
+"Mean ('covariate_misspecification', 'No adaptation') ROC_AUC",4.440892098500626e-16,True
+"MCSE ('covariate_misspecification', 'No adaptation') ROC_AUC",2.222614453595284e-17,True
+"Mean ('intercept_shift', 'Deployment refit') Average_true_risk",2.220446049250313e-16,True
+"MCSE ('intercept_shift', 'Deployment refit') Average_true_risk",7.983793747640133e-17,True
+"Mean ('intercept_shift', 'Deployment refit') Average_predicted_risk",4.440892098500626e-16,True
+"MCSE ('intercept_shift', 'Deployment refit') Average_predicted_risk",4.762358042642578e-17,True
+"Mean ('intercept_shift', 'Deployment refit') Event_rate",0.0,True
+"MCSE ('intercept_shift', 'Deployment refit') Event_rate",4.450649918052996e-17,True
+"Mean ('intercept_shift', 'Deployment refit') Log_loss",0.0,True
+"MCSE ('intercept_shift', 'Deployment refit') Log_loss",4.960224939121183e-17,True
+"Mean ('intercept_shift', 'Deployment refit') Brier",4.163336342344337e-16,True
+"MCSE ('intercept_shift', 'Deployment refit') Brier",9.650754587836596e-17,True
+"Mean ('intercept_shift', 'Deployment refit') PMSE",7.020209066843641e-18,True
+"MCSE ('intercept_shift', 'Deployment refit') PMSE",8.621948370101523e-18,True
+"Mean ('intercept_shift', 'Deployment refit') ROC_AUC",5.551115123125783e-16,True
+"MCSE ('intercept_shift', 'Deployment refit') ROC_AUC",1.8323016715005025e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') Average_true_risk",2.220446049250313e-16,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') Average_true_risk",7.983793747640133e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') Average_predicted_risk",3.608224830031759e-16,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') Average_predicted_risk",9.820161177287456e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') Event_rate",0.0,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') Event_rate",4.450649918052996e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') Log_loss",4.996003610813204e-16,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') Log_loss",8.716985466783456e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') Brier",1.3877787807814457e-16,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') Brier",6.484884244178923e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') PMSE",2.710505431213761e-20,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') PMSE",9.767814541147141e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') ROC_AUC",3.3306690738754696e-16,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') ROC_AUC",9.272639080182277e-17,True
+"Mean ('intercept_shift', 'Intercept recalibration') Average_true_risk",2.220446049250313e-16,True
+"MCSE ('intercept_shift', 'Intercept recalibration') Average_true_risk",7.983793747640133e-17,True
+"Mean ('intercept_shift', 'Intercept recalibration') Average_predicted_risk",2.498001805406602e-16,True
+"MCSE ('intercept_shift', 'Intercept recalibration') Average_predicted_risk",6.223320470066795e-17,True
+"Mean ('intercept_shift', 'Intercept recalibration') Event_rate",0.0,True
+"MCSE ('intercept_shift', 'Intercept recalibration') Event_rate",4.450649918052996e-17,True
+"Mean ('intercept_shift', 'Intercept recalibration') Log_loss",3.3306690738754696e-16,True
+"MCSE ('intercept_shift', 'Intercept recalibration') Log_loss",1.2034644114589099e-17,True
+"Mean ('intercept_shift', 'Intercept recalibration') Brier",4.440892098500626e-16,True
+"MCSE ('intercept_shift', 'Intercept recalibration') Brier",4.152494320619482e-17,True
+"Mean ('intercept_shift', 'Intercept recalibration') PMSE",2.4990860075790877e-17,True
+"MCSE ('intercept_shift', 'Intercept recalibration') PMSE",7.368085498280982e-17,True
+"Mean ('intercept_shift', 'Intercept recalibration') ROC_AUC",3.3306690738754696e-16,True
+"MCSE ('intercept_shift', 'Intercept recalibration') ROC_AUC",9.272639080182277e-17,True
+"Mean ('intercept_shift', 'No adaptation') Average_true_risk",2.220446049250313e-16,True
+"MCSE ('intercept_shift', 'No adaptation') Average_true_risk",7.983793747640133e-17,True
+"Mean ('intercept_shift', 'No adaptation') Average_predicted_risk",5.551115123125783e-17,True
+"MCSE ('intercept_shift', 'No adaptation') Average_predicted_risk",2.1602728286773676e-17,True
+"Mean ('intercept_shift', 'No adaptation') Event_rate",0.0,True
+"MCSE ('intercept_shift', 'No adaptation') Event_rate",4.450649918052996e-17,True
+"Mean ('intercept_shift', 'No adaptation') Log_loss",2.220446049250313e-16,True
+"MCSE ('intercept_shift', 'No adaptation') Log_loss",2.1521413123837263e-17,True
+"Mean ('intercept_shift', 'No adaptation') Brier",2.7755575615628914e-17,True
+"MCSE ('intercept_shift', 'No adaptation') Brier",7.884860299400831e-17,True
+"Mean ('intercept_shift', 'No adaptation') PMSE",1.3877787807814457e-17,True
+"MCSE ('intercept_shift', 'No adaptation') PMSE",1.1783922362201826e-17,True
+"Mean ('intercept_shift', 'No adaptation') ROC_AUC",3.3306690738754696e-16,True
+"MCSE ('intercept_shift', 'No adaptation') ROC_AUC",9.272639080182277e-17,True
+"Mean ('predictor_effect_shift', 'Deployment refit') Average_true_risk",1.6653345369377348e-16,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') Average_true_risk",5.055770255571468e-17,True
+"Mean ('predictor_effect_shift', 'Deployment refit') Average_predicted_risk",3.608224830031759e-16,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') Average_predicted_risk",2.0708261494473135e-17,True
+"Mean ('predictor_effect_shift', 'Deployment refit') Event_rate",0.0,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') Event_rate",8.692590917902532e-17,True
+"Mean ('predictor_effect_shift', 'Deployment refit') Log_loss",4.440892098500626e-16,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') Log_loss",1.0842021724855044e-19,True
+"Mean ('predictor_effect_shift', 'Deployment refit') Brier",1.3877787807814457e-17,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') Brier",8.84980023291293e-18,True
+"Mean ('predictor_effect_shift', 'Deployment refit') PMSE",9.595189226496714e-18,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') PMSE",7.390277761499045e-17,True
+"Mean ('predictor_effect_shift', 'Deployment refit') ROC_AUC",5.551115123125783e-16,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') ROC_AUC",7.757466544133784e-17,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') Average_true_risk",1.6653345369377348e-16,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') Average_true_risk",5.055770255571468e-17,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') Average_predicted_risk",3.469446951953614e-16,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') Average_predicted_risk",4.241940999849536e-17,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') Event_rate",0.0,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') Event_rate",8.692590917902532e-17,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') Log_loss",0.0,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') Log_loss",5.1553813301685736e-17,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') Brier",2.0816681711721685e-16,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') Brier",8.418829869349942e-17,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') PMSE",2.949029909160572e-17,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') PMSE",7.741881137904305e-17,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') ROC_AUC",1.1102230246251565e-16,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') ROC_AUC",2.0925101928970236e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') Average_true_risk",1.6653345369377348e-16,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') Average_true_risk",5.055770255571468e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') Average_predicted_risk",1.249000902703301e-16,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') Average_predicted_risk",3.8191021525801894e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') Event_rate",0.0,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') Event_rate",8.692590917902532e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') Log_loss",1.6653345369377348e-16,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') Log_loss",9.660241356845845e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') Brier",3.885780586188048e-16,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') Brier",4.1823098803628334e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') PMSE",3.8163916471489756e-17,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') PMSE",4.3673018760431725e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') ROC_AUC",2.220446049250313e-16,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') ROC_AUC",4.9873299934333204e-17,True
+"Mean ('predictor_effect_shift', 'No adaptation') Average_true_risk",1.6653345369377348e-16,True
+"MCSE ('predictor_effect_shift', 'No adaptation') Average_true_risk",5.055770255571468e-17,True
+"Mean ('predictor_effect_shift', 'No adaptation') Average_predicted_risk",3.191891195797325e-16,True
+"MCSE ('predictor_effect_shift', 'No adaptation') Average_predicted_risk",6.245004513516506e-17,True
+"Mean ('predictor_effect_shift', 'No adaptation') Event_rate",0.0,True
+"MCSE ('predictor_effect_shift', 'No adaptation') Event_rate",8.692590917902532e-17,True
+"Mean ('predictor_effect_shift', 'No adaptation') Log_loss",4.996003610813204e-16,True
+"MCSE ('predictor_effect_shift', 'No adaptation') Log_loss",9.882502802205373e-17,True
+"Mean ('predictor_effect_shift', 'No adaptation') Brier",8.326672684688674e-17,True
+"MCSE ('predictor_effect_shift', 'No adaptation') Brier",2.474691458698164e-17,True
+"Mean ('predictor_effect_shift', 'No adaptation') PMSE",3.469446951953614e-17,True
+"MCSE ('predictor_effect_shift', 'No adaptation') PMSE",4.7352529883304406e-17,True
+"Mean ('predictor_effect_shift', 'No adaptation') ROC_AUC",2.220446049250313e-16,True
+"MCSE ('predictor_effect_shift', 'No adaptation') ROC_AUC",4.9873299934333204e-17,True
+"Mean ('baseline',) Original_cutoff",0.0,True
+"MCSE ('baseline',) Original_cutoff",4.423544863740858e-17,True
+"Mean ('baseline',) Revised_cutoff",0.0,True
+"MCSE ('baseline',) Revised_cutoff",3.8977068100853884e-17,True
+"Mean ('baseline',) BA_original",3.3306690738754696e-16,True
+"MCSE ('baseline',) BA_original",5.724587470723463e-17,True
+"Mean ('baseline',) BA_revised",1.1102230246251565e-16,True
+"MCSE ('baseline',) BA_revised",1.0950441942103595e-17,True
+"Mean ('baseline',) BA_gain",1.3538974628912737e-17,True
+"MCSE ('baseline',) BA_gain",9.622294280808852e-18,True
+"Mean ('covariate_misspecification',) Original_cutoff",2.7755575615628914e-17,True
+"MCSE ('covariate_misspecification',) Original_cutoff",3.924811864397526e-17,True
+"Mean ('covariate_misspecification',) Revised_cutoff",0.0,True
+"MCSE ('covariate_misspecification',) Revised_cutoff",1.452830911130576e-17,True
+"Mean ('covariate_misspecification',) BA_original",4.440892098500626e-16,True
+"MCSE ('covariate_misspecification',) BA_original",2.3852447794681098e-18,True
+"Mean ('covariate_misspecification',) BA_revised",1.1102230246251565e-16,True
+"MCSE ('covariate_misspecification',) BA_revised",3.583288180064592e-17,True
+"Mean ('covariate_misspecification',) BA_gain",3.885780586188048e-16,True
+"MCSE ('covariate_misspecification',) BA_gain",5.898059818321144e-17,True
+"Mean ('intercept_shift',) Original_cutoff",0.0,True
+"MCSE ('intercept_shift',) Original_cutoff",4.423544863740858e-17,True
+"Mean ('intercept_shift',) Revised_cutoff",0.0,True
+"MCSE ('intercept_shift',) Revised_cutoff",2.992397996059992e-17,True
+"Mean ('intercept_shift',) BA_original",3.3306690738754696e-16,True
+"MCSE ('intercept_shift',) BA_original",1.0299920638612292e-17,True
+"Mean ('intercept_shift',) BA_revised",3.3306690738754696e-16,True
+"MCSE ('intercept_shift',) BA_revised",9.267218069319849e-17,True
+"Mean ('intercept_shift',) BA_gain",8.326672684688674e-17,True
+"MCSE ('intercept_shift',) BA_gain",1.702197410802242e-17,True
+"Mean ('predictor_effect_shift',) Original_cutoff",0.0,True
+"MCSE ('predictor_effect_shift',) Original_cutoff",4.423544863740858e-17,True
+"Mean ('predictor_effect_shift',) Revised_cutoff",0.0,True
+"MCSE ('predictor_effect_shift',) Revised_cutoff",7.28583859910259e-17,True
+"Mean ('predictor_effect_shift',) BA_original",4.440892098500626e-16,True
+"MCSE ('predictor_effect_shift',) BA_original",3.935653886122381e-17,True
+"Mean ('predictor_effect_shift',) BA_revised",2.7755575615628914e-16,True
+"MCSE ('predictor_effect_shift',) BA_revised",9.75781955236954e-19,True
+"Mean ('predictor_effect_shift',) BA_gain",2.0816681711721685e-17,True
+"MCSE ('predictor_effect_shift',) BA_gain",9.784924606681678e-17,True
+BA gain identity,1.089840023782429e-15,True
+"Mean ('baseline', 'Deployment refit') Log_loss_gain",1.612411918393286e-17,True
+"MCSE ('baseline', 'Deployment refit') Log_loss_gain",1.8407720009730455e-17,True
+"Mean ('baseline', 'Deployment refit') Brier_gain",5.353248226647178e-18,True
+"MCSE ('baseline', 'Deployment refit') Brier_gain",3.6192870803229e-17,True
+"Mean ('baseline', 'Deployment refit') PMSE_gain",4.5499645311185624e-17,True
+"MCSE ('baseline', 'Deployment refit') PMSE_gain",3.6074709707087024e-17,True
+"Mean ('baseline', 'Deployment refit') ROC_AUC_gain",8.836247705756861e-18,True
+"MCSE ('baseline', 'Deployment refit') ROC_AUC_gain",7.273641324662128e-17,True
+"Mean ('baseline', 'Intercept + slope recalibration') Log_loss_gain",6.33944868713536e-17,True
+"MCSE ('baseline', 'Intercept + slope recalibration') Log_loss_gain",4.6773159347382465e-17,True
+"Mean ('baseline', 'Intercept + slope recalibration') Brier_gain",6.956734535358772e-18,True
+"MCSE ('baseline', 'Intercept + slope recalibration') Brier_gain",2.439454888092385e-19,True
+"Mean ('baseline', 'Intercept + slope recalibration') PMSE_gain",3.650034376308231e-17,True
+"MCSE ('baseline', 'Intercept + slope recalibration') PMSE_gain",7.618637844078804e-18,True
+"Mean ('baseline', 'Intercept + slope recalibration') ROC_AUC_gain",0.0,True
+"MCSE ('baseline', 'Intercept + slope recalibration') ROC_AUC_gain",0.0,True
+"Mean ('baseline', 'Intercept recalibration') Log_loss_gain",1.070157307428844e-17,True
+"MCSE ('baseline', 'Intercept recalibration') Log_loss_gain",2.4924791505905042e-17,True
+"Mean ('baseline', 'Intercept recalibration') Brier_gain",7.596376759433777e-17,True
+"MCSE ('baseline', 'Intercept recalibration') Brier_gain",8.318244706863494e-17,True
+"Mean ('baseline', 'Intercept recalibration') PMSE_gain",9.789922101070478e-17,True
+"MCSE ('baseline', 'Intercept recalibration') PMSE_gain",6.273591875486338e-17,True
+"Mean ('baseline', 'Intercept recalibration') ROC_AUC_gain",0.0,True
+"MCSE ('baseline', 'Intercept recalibration') ROC_AUC_gain",0.0,True
+"Mean ('covariate_misspecification', 'Deployment refit') Log_loss_gain",3.469446951953614e-16,True
+"MCSE ('covariate_misspecification', 'Deployment refit') Log_loss_gain",7.24247051220317e-17,True
+"Mean ('covariate_misspecification', 'Deployment refit') Brier_gain",2.7755575615628914e-17,True
+"MCSE ('covariate_misspecification', 'Deployment refit') Brier_gain",1.5449880957918438e-17,True
+"Mean ('covariate_misspecification', 'Deployment refit') PMSE_gain",3.469446951953614e-17,True
+"MCSE ('covariate_misspecification', 'Deployment refit') PMSE_gain",9.806608650131388e-17,True
+"Mean ('covariate_misspecification', 'Deployment refit') ROC_AUC_gain",1.0408340855860843e-17,True
+"MCSE ('covariate_misspecification', 'Deployment refit') ROC_AUC_gain",6.610922746730363e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') Log_loss_gain",1.249000902703301e-16,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') Log_loss_gain",4.694595406862234e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') Brier_gain",6.938893903907228e-18,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') Brier_gain",8.429671891074797e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') PMSE_gain",2.0816681711721685e-17,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') PMSE_gain",6.955156936494511e-17,True
+"Mean ('covariate_misspecification', 'Importance-weighted refit') ROC_AUC_gain",1.3877787807814457e-17,True
+"MCSE ('covariate_misspecification', 'Importance-weighted refit') ROC_AUC_gain",8.982614999042404e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') Log_loss_gain",4.163336342344337e-17,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') Log_loss_gain",4.5211230592645535e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') Brier_gain",4.85722573273506e-17,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') Brier_gain",3.916680348103885e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') PMSE_gain",2.0816681711721685e-17,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') PMSE_gain",2.15485181781494e-17,True
+"Mean ('covariate_misspecification', 'Intercept + slope recalibration') ROC_AUC_gain",0.0,True
+"MCSE ('covariate_misspecification', 'Intercept + slope recalibration') ROC_AUC_gain",0.0,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') Log_loss_gain",0.0,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') Log_loss_gain",6.478107980600889e-17,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') Brier_gain",6.938893903907228e-18,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') Brier_gain",2.9652929417478546e-17,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') PMSE_gain",3.469446951953614e-18,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') PMSE_gain",9.03682510766668e-17,True
+"Mean ('covariate_misspecification', 'Intercept recalibration') ROC_AUC_gain",0.0,True
+"MCSE ('covariate_misspecification', 'Intercept recalibration') ROC_AUC_gain",0.0,True
+"Mean ('intercept_shift', 'Deployment refit') Log_loss_gain",2.7755575615628914e-17,True
+"MCSE ('intercept_shift', 'Deployment refit') Log_loss_gain",1.8865117801247777e-17,True
+"Mean ('intercept_shift', 'Deployment refit') Brier_gain",1.734723475976807e-17,True
+"MCSE ('intercept_shift', 'Deployment refit') Brier_gain",6.048492869753508e-17,True
+"Mean ('intercept_shift', 'Deployment refit') PMSE_gain",8.673617379884035e-17,True
+"MCSE ('intercept_shift', 'Deployment refit') PMSE_gain",6.764066303593941e-17,True
+"Mean ('intercept_shift', 'Deployment refit') ROC_AUC_gain",1.5910666881224778e-17,True
+"MCSE ('intercept_shift', 'Deployment refit') ROC_AUC_gain",7.318025851098253e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') Log_loss_gain",0.0,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') Log_loss_gain",9.627715291671279e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') Brier_gain",3.469446951953614e-18,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') Brier_gain",1.8444989459409644e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') PMSE_gain",8.673617379884035e-17,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') PMSE_gain",4.280565702244332e-17,True
+"Mean ('intercept_shift', 'Intercept + slope recalibration') ROC_AUC_gain",0.0,True
+"MCSE ('intercept_shift', 'Intercept + slope recalibration') ROC_AUC_gain",0.0,True
+"Mean ('intercept_shift', 'Intercept recalibration') Log_loss_gain",0.0,True
+"MCSE ('intercept_shift', 'Intercept recalibration') Log_loss_gain",7.432205892388133e-17,True
+"Mean ('intercept_shift', 'Intercept recalibration') Brier_gain",2.0816681711721685e-17,True
+"MCSE ('intercept_shift', 'Intercept recalibration') Brier_gain",3.4870652372565036e-17,True
+"Mean ('intercept_shift', 'Intercept recalibration') PMSE_gain",6.245004513516506e-17,True
+"MCSE ('intercept_shift', 'Intercept recalibration') PMSE_gain",4.172823111353585e-17,True
+"Mean ('intercept_shift', 'Intercept recalibration') ROC_AUC_gain",0.0,True
+"MCSE ('intercept_shift', 'Intercept recalibration') ROC_AUC_gain",0.0,True
+"Mean ('predictor_effect_shift', 'Deployment refit') Log_loss_gain",5.551115123125783e-17,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') Log_loss_gain",3.946495907847236e-17,True
+"Mean ('predictor_effect_shift', 'Deployment refit') Brier_gain",1.3877787807814457e-17,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') Brier_gain",6.078308429496859e-17,True
+"Mean ('predictor_effect_shift', 'Deployment refit') PMSE_gain",2.42861286636753e-17,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') PMSE_gain",8.714952587710045e-17,True
+"Mean ('predictor_effect_shift', 'Deployment refit') ROC_AUC_gain",3.3306690738754696e-16,True
+"MCSE ('predictor_effect_shift', 'Deployment refit') ROC_AUC_gain",5.5294310796760726e-18,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') Log_loss_gain",5.551115123125783e-17,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') Log_loss_gain",9.112719259740665e-17,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') Brier_gain",5.204170427930421e-18,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') Brier_gain",9.428493142477068e-17,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') PMSE_gain",5.204170427930421e-18,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') PMSE_gain",5.484030113703242e-17,True
+"Mean ('predictor_effect_shift', 'Intercept + slope recalibration') ROC_AUC_gain",3.469446951953614e-17,True
+"MCSE ('predictor_effect_shift', 'Intercept + slope recalibration') ROC_AUC_gain",3.686287386450715e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') Log_loss_gain",8.986341944010323e-17,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') Log_loss_gain",4.834017029980292e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') Brier_gain",7.49658039637946e-17,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') Brier_gain",6.047137617037901e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') PMSE_gain",9.955008822490341e-17,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') PMSE_gain",9.044956623960321e-17,True
+"Mean ('predictor_effect_shift', 'Intercept recalibration') ROC_AUC_gain",0.0,True
+"MCSE ('predictor_effect_shift', 'Intercept recalibration') ROC_AUC_gain",0.0,True
+Direct Log_loss mean,7.32920668600201e-17,True
+Direct Log_loss MCSE,2.9341221292888964e-17,True
+Direct Log_loss lower,2.3635607360183997e-17,True
+Direct Log_loss upper,2.2551405187698492e-17,True
+Direct Brier mean,8.782037597132586e-17,True
+Direct Brier MCSE,5.324449106440532e-17,True
+Direct Brier lower,7.144892316679474e-17,True
+Direct Brier upper,4.119968255444917e-18,True
+Direct PMSE mean,1.6046192152785466e-17,True
+Direct PMSE MCSE,3.173324233593511e-17,True
+Direct PMSE lower,8.57603918436034e-17,True
+Direct PMSE upper,4.629543276513104e-17,True
+Direct ROC_AUC mean,2.2442984970449942e-17,True
+Direct ROC_AUC MCSE,1.9471593391481856e-17,True
+Direct ROC_AUC lower,2.8189256484623115e-17,True
+Direct ROC_AUC upper,1.6588293239028218e-17,True

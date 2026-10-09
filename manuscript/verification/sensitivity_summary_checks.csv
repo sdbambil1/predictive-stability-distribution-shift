@@ -1,0 +1,513 @@
+Condition,Adaptation_n,Method,Metric,Statistic,Difference,Passed
+baseline,250,Deployment refit,Log_loss,Mean,3.885780586188048e-16,True
+baseline,250,Deployment refit,Log_loss,MCSE,3.01950305037213e-17,True
+baseline,250,Deployment refit,Brier,Mean,2.7755575615628914e-17,True
+baseline,250,Deployment refit,Brier,MCSE,6.644804064620535e-17,True
+baseline,250,Deployment refit,PMSE,Mean,8.239936510889834e-18,True
+baseline,250,Deployment refit,PMSE,MCSE,2.6298678946351517e-17,True
+baseline,250,Deployment refit,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,250,Deployment refit,ROC_AUC,MCSE,1.0625181290357943e-17,True
+baseline,250,Intercept + slope recalibration,Log_loss,Mean,2.220446049250313e-16,True
+baseline,250,Intercept + slope recalibration,Log_loss,MCSE,3.06287113727155e-17,True
+baseline,250,Intercept + slope recalibration,Brier,Mean,1.3877787807814457e-17,True
+baseline,250,Intercept + slope recalibration,Brier,MCSE,7.98514900035574e-17,True
+baseline,250,Intercept + slope recalibration,PMSE,Mean,4.0549161250957866e-17,True
+baseline,250,Intercept + slope recalibration,PMSE,MCSE,9.995666403958547e-17,True
+baseline,250,Intercept + slope recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,250,Intercept + slope recalibration,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,250,Intercept recalibration,Log_loss,Mean,0.0,True
+baseline,250,Intercept recalibration,Log_loss,MCSE,1.100465205072787e-17,True
+baseline,250,Intercept recalibration,Brier,Mean,1.3877787807814457e-17,True
+baseline,250,Intercept recalibration,Brier,MCSE,1.3064636178450328e-17,True
+baseline,250,Intercept recalibration,PMSE,Mean,2.168404344971009e-19,True
+baseline,250,Intercept recalibration,PMSE,MCSE,7.600596042302288e-17,True
+baseline,250,Intercept recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,250,Intercept recalibration,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,250,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+baseline,250,No adaptation,Log_loss,MCSE,6.662422349923425e-17,True
+baseline,250,No adaptation,Brier,Mean,1.3877787807814457e-17,True
+baseline,250,No adaptation,Brier,MCSE,5.854691731421724e-17,True
+baseline,250,No adaptation,PMSE,Mean,3.0899761915836876e-18,True
+baseline,250,No adaptation,PMSE,MCSE,8.52377725151475e-17,True
+baseline,250,No adaptation,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,250,No adaptation,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,500,Deployment refit,Log_loss,Mean,1.6653345369377348e-16,True
+baseline,500,Deployment refit,Log_loss,MCSE,6.657001339060997e-17,True
+baseline,500,Deployment refit,Brier,Mean,5.551115123125783e-17,True
+baseline,500,Deployment refit,Brier,MCSE,9.958396954279358e-17,True
+baseline,500,Deployment refit,PMSE,Mean,3.903127820947816e-17,True
+baseline,500,Deployment refit,PMSE,MCSE,1.8112952544085958e-17,True
+baseline,500,Deployment refit,ROC_AUC,Mean,0.0,True
+baseline,500,Deployment refit,ROC_AUC,MCSE,7.860465750519907e-17,True
+baseline,500,Intercept + slope recalibration,Log_loss,Mean,2.220446049250313e-16,True
+baseline,500,Intercept + slope recalibration,Log_loss,MCSE,8.868773770931426e-17,True
+baseline,500,Intercept + slope recalibration,Brier,Mean,4.163336342344337e-17,True
+baseline,500,Intercept + slope recalibration,Brier,MCSE,4.7135689448807305e-17,True
+baseline,500,Intercept + slope recalibration,PMSE,Mean,4.336808689942018e-17,True
+baseline,500,Intercept + slope recalibration,PMSE,MCSE,7.249246775781204e-17,True
+baseline,500,Intercept + slope recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,500,Intercept + slope recalibration,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,500,Intercept recalibration,Log_loss,Mean,2.7755575615628914e-16,True
+baseline,500,Intercept recalibration,Log_loss,MCSE,6.5052130349130266e-18,True
+baseline,500,Intercept recalibration,Brier,Mean,1.3877787807814457e-17,True
+baseline,500,Intercept recalibration,Brier,MCSE,4.2609145378680324e-17,True
+baseline,500,Intercept recalibration,PMSE,Mean,3.800128614561693e-17,True
+baseline,500,Intercept recalibration,PMSE,MCSE,3.809954196749843e-17,True
+baseline,500,Intercept recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,500,Intercept recalibration,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,500,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+baseline,500,No adaptation,Log_loss,MCSE,6.662422349923425e-17,True
+baseline,500,No adaptation,Brier,Mean,1.3877787807814457e-17,True
+baseline,500,No adaptation,Brier,MCSE,5.854691731421724e-17,True
+baseline,500,No adaptation,PMSE,Mean,3.0899761915836876e-18,True
+baseline,500,No adaptation,PMSE,MCSE,8.52377725151475e-17,True
+baseline,500,No adaptation,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,500,No adaptation,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,1000,Deployment refit,Log_loss,Mean,0.0,True
+baseline,1000,Deployment refit,Log_loss,MCSE,5.881796785733862e-17,True
+baseline,1000,Deployment refit,Brier,Mean,2.7755575615628914e-17,True
+baseline,1000,Deployment refit,Brier,MCSE,7.975662231346492e-17,True
+baseline,1000,Deployment refit,PMSE,Mean,4.8138576458356397e-17,True
+baseline,1000,Deployment refit,PMSE,MCSE,4.363236117896352e-17,True
+baseline,1000,Deployment refit,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,1000,Deployment refit,ROC_AUC,MCSE,7.594836218260959e-17,True
+baseline,1000,Intercept + slope recalibration,Log_loss,Mean,4.440892098500626e-16,True
+baseline,1000,Intercept + slope recalibration,Log_loss,MCSE,7.979727989493313e-17,True
+baseline,1000,Intercept + slope recalibration,Brier,Mean,4.163336342344337e-17,True
+baseline,1000,Intercept + slope recalibration,Brier,MCSE,4.2378752417027155e-17,True
+baseline,1000,Intercept + slope recalibration,PMSE,Mean,4.4885969940899884e-17,True
+baseline,1000,Intercept + slope recalibration,PMSE,MCSE,9.370386682295423e-17,True
+baseline,1000,Intercept + slope recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,1000,Intercept + slope recalibration,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,1000,Intercept recalibration,Log_loss,Mean,4.440892098500626e-16,True
+baseline,1000,Intercept recalibration,Log_loss,MCSE,4.233809483555895e-17,True
+baseline,1000,Intercept recalibration,Brier,Mean,4.163336342344337e-17,True
+baseline,1000,Intercept recalibration,Brier,MCSE,8.168108116962669e-17,True
+baseline,1000,Intercept recalibration,PMSE,Mean,4.1470733097570545e-17,True
+baseline,1000,Intercept recalibration,PMSE,MCSE,9.299405321315513e-17,True
+baseline,1000,Intercept recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,1000,Intercept recalibration,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,1000,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+baseline,1000,No adaptation,Log_loss,MCSE,6.662422349923425e-17,True
+baseline,1000,No adaptation,Brier,Mean,1.3877787807814457e-17,True
+baseline,1000,No adaptation,Brier,MCSE,5.854691731421724e-17,True
+baseline,1000,No adaptation,PMSE,Mean,3.0899761915836876e-18,True
+baseline,1000,No adaptation,PMSE,MCSE,8.52377725151475e-17,True
+baseline,1000,No adaptation,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,1000,No adaptation,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,5000,Deployment refit,Log_loss,Mean,3.885780586188048e-16,True
+baseline,5000,Deployment refit,Log_loss,MCSE,5.708324438136181e-17,True
+baseline,5000,Deployment refit,Brier,Mean,1.3877787807814457e-17,True
+baseline,5000,Deployment refit,Brier,MCSE,8.669551621737215e-17,True
+baseline,5000,Deployment refit,PMSE,Mean,3.1807781235293486e-17,True
+baseline,5000,Deployment refit,PMSE,MCSE,9.651559269136488e-17,True
+baseline,5000,Deployment refit,ROC_AUC,Mean,0.0,True
+baseline,5000,Deployment refit,ROC_AUC,MCSE,8.917562868693274e-17,True
+baseline,5000,Intercept + slope recalibration,Log_loss,Mean,4.440892098500626e-16,True
+baseline,5000,Intercept + slope recalibration,Log_loss,MCSE,7.860465750519907e-17,True
+baseline,5000,Intercept + slope recalibration,Brier,Mean,1.3877787807814457e-17,True
+baseline,5000,Intercept + slope recalibration,Brier,MCSE,7.771019071289853e-17,True
+baseline,5000,Intercept + slope recalibration,PMSE,Mean,1.7889335846010823e-17,True
+baseline,5000,Intercept + slope recalibration,PMSE,MCSE,3.53365204935549e-17,True
+baseline,5000,Intercept + slope recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,5000,Intercept + slope recalibration,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,5000,Intercept recalibration,Log_loss,Mean,4.996003610813204e-16,True
+baseline,5000,Intercept recalibration,Log_loss,MCSE,4.092863201132779e-17,True
+baseline,5000,Intercept recalibration,Brier,Mean,0.0,True
+baseline,5000,Intercept recalibration,Brier,MCSE,9.74020126706665e-17,True
+baseline,5000,Intercept recalibration,PMSE,Mean,2.1507860596681194e-17,True
+baseline,5000,Intercept recalibration,PMSE,MCSE,9.84438631957893e-17,True
+baseline,5000,Intercept recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,5000,Intercept recalibration,ROC_AUC,MCSE,4.2825985813177425e-18,True
+baseline,5000,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+baseline,5000,No adaptation,Log_loss,MCSE,6.662422349923425e-17,True
+baseline,5000,No adaptation,Brier,Mean,1.3877787807814457e-17,True
+baseline,5000,No adaptation,Brier,MCSE,5.854691731421724e-17,True
+baseline,5000,No adaptation,PMSE,Mean,3.0899761915836876e-18,True
+baseline,5000,No adaptation,PMSE,MCSE,8.52377725151475e-17,True
+baseline,5000,No adaptation,ROC_AUC,Mean,1.1102230246251565e-16,True
+baseline,5000,No adaptation,ROC_AUC,MCSE,4.2825985813177425e-18,True
+covariate_misspecification,250,Deployment refit,Log_loss,Mean,5.551115123125783e-17,True
+covariate_misspecification,250,Deployment refit,Log_loss,MCSE,8.689880412471318e-17,True
+covariate_misspecification,250,Deployment refit,Brier,Mean,4.0245584642661925e-16,True
+covariate_misspecification,250,Deployment refit,Brier,MCSE,2.892109295105083e-17,True
+covariate_misspecification,250,Deployment refit,PMSE,Mean,9.540979117872439e-18,True
+covariate_misspecification,250,Deployment refit,PMSE,MCSE,2.2185486954484634e-17,True
+covariate_misspecification,250,Deployment refit,ROC_AUC,Mean,2.220446049250313e-16,True
+covariate_misspecification,250,Deployment refit,ROC_AUC,MCSE,3.507394027990607e-17,True
+covariate_misspecification,250,Intercept + slope recalibration,Log_loss,Mean,2.220446049250313e-16,True
+covariate_misspecification,250,Intercept + slope recalibration,Log_loss,MCSE,9.768661574094395e-17,True
+covariate_misspecification,250,Intercept + slope recalibration,Brier,Mean,2.7755575615628914e-17,True
+covariate_misspecification,250,Intercept + slope recalibration,Brier,MCSE,3.369158250998705e-17,True
+covariate_misspecification,250,Intercept + slope recalibration,PMSE,Mean,2.949029909160572e-17,True
+covariate_misspecification,250,Intercept + slope recalibration,PMSE,MCSE,8.244002269036654e-17,True
+covariate_misspecification,250,Intercept + slope recalibration,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,250,Intercept + slope recalibration,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,250,Intercept recalibration,Log_loss,Mean,3.885780586188048e-16,True
+covariate_misspecification,250,Intercept recalibration,Log_loss,MCSE,8.131516293641283e-17,True
+covariate_misspecification,250,Intercept recalibration,Brier,Mean,3.3306690738754696e-16,True
+covariate_misspecification,250,Intercept recalibration,Brier,MCSE,4.246006757996357e-17,True
+covariate_misspecification,250,Intercept recalibration,PMSE,Mean,3.122502256758253e-17,True
+covariate_misspecification,250,Intercept recalibration,PMSE,MCSE,1.7875783318854754e-17,True
+covariate_misspecification,250,Intercept recalibration,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,250,Intercept recalibration,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,250,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+covariate_misspecification,250,No adaptation,Log_loss,MCSE,6.819631664933823e-17,True
+covariate_misspecification,250,No adaptation,Brier,Mean,3.608224830031759e-16,True
+covariate_misspecification,250,No adaptation,Brier,MCSE,6.993104012531504e-18,True
+covariate_misspecification,250,No adaptation,PMSE,Mean,4.85722573273506e-17,True
+covariate_misspecification,250,No adaptation,PMSE,MCSE,9.269928574751063e-17,True
+covariate_misspecification,250,No adaptation,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,250,No adaptation,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,500,Deployment refit,Log_loss,Mean,2.220446049250313e-16,True
+covariate_misspecification,500,Deployment refit,Log_loss,MCSE,6.84673671924596e-17,True
+covariate_misspecification,500,Deployment refit,Brier,Mean,4.163336342344337e-17,True
+covariate_misspecification,500,Deployment refit,Brier,MCSE,3.8014838672773e-17,True
+covariate_misspecification,500,Deployment refit,PMSE,Mean,2.2985086056692694e-17,True
+covariate_misspecification,500,Deployment refit,PMSE,MCSE,2.2314235962467288e-17,True
+covariate_misspecification,500,Deployment refit,ROC_AUC,Mean,3.3306690738754696e-16,True
+covariate_misspecification,500,Deployment refit,ROC_AUC,MCSE,4.5780436733200425e-17,True
+covariate_misspecification,500,Intercept + slope recalibration,Log_loss,Mean,4.440892098500626e-16,True
+covariate_misspecification,500,Intercept + slope recalibration,Log_loss,MCSE,7.670730370334944e-17,True
+covariate_misspecification,500,Intercept + slope recalibration,Brier,Mean,3.608224830031759e-16,True
+covariate_misspecification,500,Intercept + slope recalibration,Brier,MCSE,6.44287140999511e-17,True
+covariate_misspecification,500,Intercept + slope recalibration,PMSE,Mean,8.673617379884035e-18,True
+covariate_misspecification,500,Intercept + slope recalibration,PMSE,MCSE,3.1590940800796385e-17,True
+covariate_misspecification,500,Intercept + slope recalibration,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,500,Intercept + slope recalibration,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,500,Intercept recalibration,Log_loss,Mean,1.1102230246251565e-16,True
+covariate_misspecification,500,Intercept recalibration,Log_loss,MCSE,2.3798237686056822e-17,True
+covariate_misspecification,500,Intercept recalibration,Brier,Mean,2.7755575615628914e-16,True
+covariate_misspecification,500,Intercept recalibration,Brier,MCSE,9.531492348863191e-17,True
+covariate_misspecification,500,Intercept recalibration,PMSE,Mean,3.469446951953614e-17,True
+covariate_misspecification,500,Intercept recalibration,PMSE,MCSE,9.351243737687476e-17,True
+covariate_misspecification,500,Intercept recalibration,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,500,Intercept recalibration,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,500,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+covariate_misspecification,500,No adaptation,Log_loss,MCSE,6.819631664933823e-17,True
+covariate_misspecification,500,No adaptation,Brier,Mean,3.608224830031759e-16,True
+covariate_misspecification,500,No adaptation,Brier,MCSE,6.993104012531504e-18,True
+covariate_misspecification,500,No adaptation,PMSE,Mean,4.85722573273506e-17,True
+covariate_misspecification,500,No adaptation,PMSE,MCSE,9.269928574751063e-17,True
+covariate_misspecification,500,No adaptation,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,500,No adaptation,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,1000,Deployment refit,Log_loss,Mean,5.551115123125783e-16,True
+covariate_misspecification,1000,Deployment refit,Log_loss,MCSE,7.253312533928025e-17,True
+covariate_misspecification,1000,Deployment refit,Brier,Mean,1.3877787807814457e-16,True
+covariate_misspecification,1000,Deployment refit,Brier,MCSE,6.528252331078344e-17,True
+covariate_misspecification,1000,Deployment refit,PMSE,Mean,1.7780915628762273e-17,True
+covariate_misspecification,1000,Deployment refit,PMSE,MCSE,7.926873133584644e-17,True
+covariate_misspecification,1000,Deployment refit,ROC_AUC,Mean,5.551115123125783e-16,True
+covariate_misspecification,1000,Deployment refit,ROC_AUC,MCSE,2.935477382004503e-17,True
+covariate_misspecification,1000,Intercept + slope recalibration,Log_loss,Mean,4.440892098500626e-16,True
+covariate_misspecification,1000,Intercept + slope recalibration,Log_loss,MCSE,9.351243737687476e-17,True
+covariate_misspecification,1000,Intercept + slope recalibration,Brier,Mean,2.7755575615628914e-16,True
+covariate_misspecification,1000,Intercept + slope recalibration,Brier,MCSE,5.629719780630982e-17,True
+covariate_misspecification,1000,Intercept + slope recalibration,PMSE,Mean,2.949029909160572e-17,True
+covariate_misspecification,1000,Intercept + slope recalibration,PMSE,MCSE,1.9474981523270873e-17,True
+covariate_misspecification,1000,Intercept + slope recalibration,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,1000,Intercept + slope recalibration,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,1000,Intercept recalibration,Log_loss,Mean,5.551115123125783e-17,True
+covariate_misspecification,1000,Intercept recalibration,Log_loss,MCSE,8.158621347953421e-17,True
+covariate_misspecification,1000,Intercept recalibration,Brier,Mean,1.1102230246251565e-16,True
+covariate_misspecification,1000,Intercept recalibration,Brier,MCSE,2.2863113312288075e-17,True
+covariate_misspecification,1000,Intercept recalibration,PMSE,Mean,4.85722573273506e-17,True
+covariate_misspecification,1000,Intercept recalibration,PMSE,MCSE,3.2173699468507344e-17,True
+covariate_misspecification,1000,Intercept recalibration,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,1000,Intercept recalibration,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,1000,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+covariate_misspecification,1000,No adaptation,Log_loss,MCSE,6.819631664933823e-17,True
+covariate_misspecification,1000,No adaptation,Brier,Mean,3.608224830031759e-16,True
+covariate_misspecification,1000,No adaptation,Brier,MCSE,6.993104012531504e-18,True
+covariate_misspecification,1000,No adaptation,PMSE,Mean,4.85722573273506e-17,True
+covariate_misspecification,1000,No adaptation,PMSE,MCSE,9.269928574751063e-17,True
+covariate_misspecification,1000,No adaptation,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,1000,No adaptation,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,5000,Deployment refit,Log_loss,Mean,1.6653345369377348e-16,True
+covariate_misspecification,5000,Deployment refit,Log_loss,MCSE,9.578926193909432e-17,True
+covariate_misspecification,5000,Deployment refit,Brier,Mean,3.608224830031759e-16,True
+covariate_misspecification,5000,Deployment refit,Brier,MCSE,7.177418381854039e-17,True
+covariate_misspecification,5000,Deployment refit,PMSE,Mean,1.951563910473908e-18,True
+covariate_misspecification,5000,Deployment refit,PMSE,MCSE,6.682835843952253e-17,True
+covariate_misspecification,5000,Deployment refit,ROC_AUC,Mean,2.220446049250313e-16,True
+covariate_misspecification,5000,Deployment refit,ROC_AUC,MCSE,7.94178091345632e-17,True
+covariate_misspecification,5000,Intercept + slope recalibration,Log_loss,Mean,4.440892098500626e-16,True
+covariate_misspecification,5000,Intercept + slope recalibration,Log_loss,MCSE,5.762534546760456e-17,True
+covariate_misspecification,5000,Intercept + slope recalibration,Brier,Mean,1.3877787807814457e-16,True
+covariate_misspecification,5000,Intercept + slope recalibration,Brier,MCSE,1.5978429517005122e-17,True
+covariate_misspecification,5000,Intercept + slope recalibration,PMSE,Mean,3.8163916471489756e-17,True
+covariate_misspecification,5000,Intercept + slope recalibration,PMSE,MCSE,7.935004649878286e-17,True
+covariate_misspecification,5000,Intercept + slope recalibration,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,5000,Intercept + slope recalibration,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,5000,Intercept recalibration,Log_loss,Mean,2.7755575615628914e-16,True
+covariate_misspecification,5000,Intercept recalibration,Log_loss,MCSE,8.104411239329146e-17,True
+covariate_misspecification,5000,Intercept recalibration,Brier,Mean,3.3306690738754696e-16,True
+covariate_misspecification,5000,Intercept recalibration,Brier,MCSE,7.241115259487563e-17,True
+covariate_misspecification,5000,Intercept recalibration,PMSE,Mean,3.469446951953614e-18,True
+covariate_misspecification,5000,Intercept recalibration,PMSE,MCSE,2.439454888092385e-18,True
+covariate_misspecification,5000,Intercept recalibration,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,5000,Intercept recalibration,ROC_AUC,MCSE,2.8541622190680904e-17,True
+covariate_misspecification,5000,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+covariate_misspecification,5000,No adaptation,Log_loss,MCSE,6.819631664933823e-17,True
+covariate_misspecification,5000,No adaptation,Brier,Mean,3.608224830031759e-16,True
+covariate_misspecification,5000,No adaptation,Brier,MCSE,6.993104012531504e-18,True
+covariate_misspecification,5000,No adaptation,PMSE,Mean,4.85722573273506e-17,True
+covariate_misspecification,5000,No adaptation,PMSE,MCSE,9.269928574751063e-17,True
+covariate_misspecification,5000,No adaptation,ROC_AUC,Mean,4.440892098500626e-16,True
+covariate_misspecification,5000,No adaptation,ROC_AUC,MCSE,2.8541622190680904e-17,True
+intercept_shift,250,Deployment refit,Log_loss,Mean,0.0,True
+intercept_shift,250,Deployment refit,Log_loss,MCSE,6.08237418764368e-17,True
+intercept_shift,250,Deployment refit,Brier,Mean,3.885780586188048e-16,True
+intercept_shift,250,Deployment refit,Brier,MCSE,4.9954615097269617e-17,True
+intercept_shift,250,Deployment refit,PMSE,Mean,2.3852447794681098e-17,True
+intercept_shift,250,Deployment refit,PMSE,MCSE,1.1248597539537109e-17,True
+intercept_shift,250,Deployment refit,ROC_AUC,Mean,2.220446049250313e-16,True
+intercept_shift,250,Deployment refit,ROC_AUC,MCSE,3.404394821604484e-17,True
+intercept_shift,250,Intercept + slope recalibration,Log_loss,Mean,3.885780586188048e-16,True
+intercept_shift,250,Intercept + slope recalibration,Log_loss,MCSE,7.925517880869037e-17,True
+intercept_shift,250,Intercept + slope recalibration,Brier,Mean,3.0531133177191805e-16,True
+intercept_shift,250,Intercept + slope recalibration,Brier,MCSE,3.531788576871531e-17,True
+intercept_shift,250,Intercept + slope recalibration,PMSE,Mean,2.233456475320139e-17,True
+intercept_shift,250,Intercept + slope recalibration,PMSE,MCSE,6.5526468799592674e-18,True
+intercept_shift,250,Intercept + slope recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,250,Intercept + slope recalibration,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,250,Intercept recalibration,Log_loss,Mean,5.551115123125783e-16,True
+intercept_shift,250,Intercept recalibration,Log_loss,MCSE,6.879262784420526e-17,True
+intercept_shift,250,Intercept recalibration,Brier,Mean,1.3877787807814457e-16,True
+intercept_shift,250,Intercept recalibration,Brier,MCSE,5.675798372961616e-17,True
+intercept_shift,250,Intercept recalibration,PMSE,Mean,2.439454888092385e-17,True
+intercept_shift,250,Intercept recalibration,PMSE,MCSE,6.667843360785852e-18,True
+intercept_shift,250,Intercept recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,250,Intercept recalibration,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,250,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+intercept_shift,250,No adaptation,Log_loss,MCSE,4.938540895671473e-17,True
+intercept_shift,250,No adaptation,Brier,Mean,2.7755575615628914e-17,True
+intercept_shift,250,No adaptation,Brier,MCSE,1.531435568635775e-17,True
+intercept_shift,250,No adaptation,PMSE,Mean,1.0408340855860843e-17,True
+intercept_shift,250,No adaptation,PMSE,MCSE,7.169286865560398e-17,True
+intercept_shift,250,No adaptation,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,250,No adaptation,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,500,Deployment refit,Log_loss,Mean,5.551115123125783e-17,True
+intercept_shift,500,Deployment refit,Log_loss,MCSE,1.4094628242311558e-17,True
+intercept_shift,500,Deployment refit,Brier,Mean,1.942890293094024e-16,True
+intercept_shift,500,Deployment refit,Brier,MCSE,3.6713796065790394e-17,True
+intercept_shift,500,Deployment refit,PMSE,Mean,1.0842021724855044e-18,True
+intercept_shift,500,Deployment refit,PMSE,MCSE,3.9410748969848086e-17,True
+intercept_shift,500,Deployment refit,ROC_AUC,Mean,2.220446049250313e-16,True
+intercept_shift,500,Deployment refit,ROC_AUC,MCSE,4.526544070126981e-17,True
+intercept_shift,500,Intercept + slope recalibration,Log_loss,Mean,5.551115123125783e-17,True
+intercept_shift,500,Intercept + slope recalibration,Log_loss,MCSE,8.977193988179977e-17,True
+intercept_shift,500,Intercept + slope recalibration,Brier,Mean,2.220446049250313e-16,True
+intercept_shift,500,Intercept + slope recalibration,Brier,MCSE,6.475397475169675e-17,True
+intercept_shift,500,Intercept + slope recalibration,PMSE,Mean,3.7621815385247004e-17,True
+intercept_shift,500,Intercept + slope recalibration,PMSE,MCSE,6.464894266623722e-17,True
+intercept_shift,500,Intercept + slope recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,500,Intercept + slope recalibration,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,500,Intercept recalibration,Log_loss,Mean,5.551115123125783e-17,True
+intercept_shift,500,Intercept recalibration,Log_loss,MCSE,4.933119884809045e-17,True
+intercept_shift,500,Intercept recalibration,Brier,Mean,2.7755575615628914e-17,True
+intercept_shift,500,Intercept recalibration,Brier,MCSE,7.555533889508359e-17,True
+intercept_shift,500,Intercept recalibration,PMSE,Mean,2.233456475320139e-17,True
+intercept_shift,500,Intercept recalibration,PMSE,MCSE,9.530475909326486e-17,True
+intercept_shift,500,Intercept recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,500,Intercept recalibration,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,500,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+intercept_shift,500,No adaptation,Log_loss,MCSE,4.938540895671473e-17,True
+intercept_shift,500,No adaptation,Brier,Mean,2.7755575615628914e-17,True
+intercept_shift,500,No adaptation,Brier,MCSE,1.531435568635775e-17,True
+intercept_shift,500,No adaptation,PMSE,Mean,1.0408340855860843e-17,True
+intercept_shift,500,No adaptation,PMSE,MCSE,7.169286865560398e-17,True
+intercept_shift,500,No adaptation,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,500,No adaptation,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,1000,Deployment refit,Log_loss,Mean,2.7755575615628914e-16,True
+intercept_shift,1000,Deployment refit,Log_loss,MCSE,4.786752591523502e-17,True
+intercept_shift,1000,Deployment refit,Brier,Mean,3.885780586188048e-16,True
+intercept_shift,1000,Deployment refit,Brier,MCSE,1.3931997916438732e-17,True
+intercept_shift,1000,Deployment refit,PMSE,Mean,3.707971429900425e-17,True
+intercept_shift,1000,Deployment refit,PMSE,MCSE,9.538607425620127e-17,True
+intercept_shift,1000,Deployment refit,ROC_AUC,Mean,3.3306690738754696e-16,True
+intercept_shift,1000,Deployment refit,ROC_AUC,MCSE,7.589415207398531e-17,True
+intercept_shift,1000,Intercept + slope recalibration,Log_loss,Mean,3.885780586188048e-16,True
+intercept_shift,1000,Intercept + slope recalibration,Log_loss,MCSE,9.73613550891983e-17,True
+intercept_shift,1000,Intercept + slope recalibration,Brier,Mean,1.6653345369377348e-16,True
+intercept_shift,1000,Intercept + slope recalibration,Brier,MCSE,7.781861093014708e-17,True
+intercept_shift,1000,Intercept + slope recalibration,PMSE,Mean,3.810970636286548e-17,True
+intercept_shift,1000,Intercept + slope recalibration,PMSE,MCSE,3.6251316076589546e-17,True
+intercept_shift,1000,Intercept + slope recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,1000,Intercept + slope recalibration,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,1000,Intercept recalibration,Log_loss,Mean,4.996003610813204e-16,True
+intercept_shift,1000,Intercept recalibration,Log_loss,MCSE,1.5043305143236374e-17,True
+intercept_shift,1000,Intercept recalibration,Brier,Mean,1.3877787807814457e-16,True
+intercept_shift,1000,Intercept recalibration,Brier,MCSE,5.0415401020575956e-17,True
+intercept_shift,1000,Intercept recalibration,PMSE,Mean,4.515702048402126e-17,True
+intercept_shift,1000,Intercept recalibration,PMSE,MCSE,9.418836966878369e-17,True
+intercept_shift,1000,Intercept recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,1000,Intercept recalibration,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,1000,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+intercept_shift,1000,No adaptation,Log_loss,MCSE,4.938540895671473e-17,True
+intercept_shift,1000,No adaptation,Brier,Mean,2.7755575615628914e-17,True
+intercept_shift,1000,No adaptation,Brier,MCSE,1.531435568635775e-17,True
+intercept_shift,1000,No adaptation,PMSE,Mean,1.0408340855860843e-17,True
+intercept_shift,1000,No adaptation,PMSE,MCSE,7.169286865560398e-17,True
+intercept_shift,1000,No adaptation,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,1000,No adaptation,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,5000,Deployment refit,Log_loss,Mean,0.0,True
+intercept_shift,5000,Deployment refit,Log_loss,MCSE,8.757643048251662e-17,True
+intercept_shift,5000,Deployment refit,Brier,Mean,2.498001805406602e-16,True
+intercept_shift,5000,Deployment refit,Brier,MCSE,5.30039337073851e-17,True
+intercept_shift,5000,Deployment refit,PMSE,Mean,1.8214596497756474e-17,True
+intercept_shift,5000,Deployment refit,PMSE,MCSE,4.360144447638874e-17,True
+intercept_shift,5000,Deployment refit,ROC_AUC,Mean,4.440892098500626e-16,True
+intercept_shift,5000,Deployment refit,ROC_AUC,MCSE,5.2475385148298415e-17,True
+intercept_shift,5000,Intercept + slope recalibration,Log_loss,Mean,2.220446049250313e-16,True
+intercept_shift,5000,Intercept + slope recalibration,Log_loss,MCSE,8.589591711516409e-17,True
+intercept_shift,5000,Intercept + slope recalibration,Brier,Mean,1.3877787807814457e-16,True
+intercept_shift,5000,Intercept + slope recalibration,Brier,MCSE,1.8688934948218883e-17,True
+intercept_shift,5000,Intercept + slope recalibration,PMSE,Mean,1.0706496453294356e-17,True
+intercept_shift,5000,Intercept + slope recalibration,PMSE,MCSE,8.999640361282216e-17,True
+intercept_shift,5000,Intercept + slope recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,5000,Intercept + slope recalibration,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,5000,Intercept recalibration,Log_loss,Mean,2.7755575615628914e-16,True
+intercept_shift,5000,Intercept recalibration,Log_loss,MCSE,9.676504389433127e-18,True
+intercept_shift,5000,Intercept recalibration,Brier,Mean,3.0531133177191805e-16,True
+intercept_shift,5000,Intercept recalibration,Brier,MCSE,5.3505377212159644e-17,True
+intercept_shift,5000,Intercept recalibration,PMSE,Mean,4.8707782598911287e-17,True
+intercept_shift,5000,Intercept recalibration,PMSE,MCSE,8.293638399745756e-17,True
+intercept_shift,5000,Intercept recalibration,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,5000,Intercept recalibration,ROC_AUC,MCSE,9.920449878242366e-17,True
+intercept_shift,5000,No adaptation,Log_loss,Mean,1.1102230246251565e-16,True
+intercept_shift,5000,No adaptation,Log_loss,MCSE,4.938540895671473e-17,True
+intercept_shift,5000,No adaptation,Brier,Mean,2.7755575615628914e-17,True
+intercept_shift,5000,No adaptation,Brier,MCSE,1.531435568635775e-17,True
+intercept_shift,5000,No adaptation,PMSE,Mean,1.0408340855860843e-17,True
+intercept_shift,5000,No adaptation,PMSE,MCSE,7.169286865560398e-17,True
+intercept_shift,5000,No adaptation,ROC_AUC,Mean,1.1102230246251565e-16,True
+intercept_shift,5000,No adaptation,ROC_AUC,MCSE,9.920449878242366e-17,True
+predictor_effect_shift,250,Deployment refit,Log_loss,Mean,2.7755575615628914e-16,True
+predictor_effect_shift,250,Deployment refit,Log_loss,MCSE,9.508453052697874e-17,True
+predictor_effect_shift,250,Deployment refit,Brier,Mean,2.7755575615628914e-17,True
+predictor_effect_shift,250,Deployment refit,Brier,MCSE,8.927049637702522e-17,True
+predictor_effect_shift,250,Deployment refit,PMSE,Mean,1.3010426069826053e-17,True
+predictor_effect_shift,250,Deployment refit,PMSE,MCSE,1.4873898553785514e-17,True
+predictor_effect_shift,250,Deployment refit,ROC_AUC,Mean,4.440892098500626e-16,True
+predictor_effect_shift,250,Deployment refit,ROC_AUC,MCSE,1.734723475976807e-18,True
+predictor_effect_shift,250,Intercept + slope recalibration,Log_loss,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,250,Intercept + slope recalibration,Log_loss,MCSE,3.518236049715462e-17,True
+predictor_effect_shift,250,Intercept + slope recalibration,Brier,Mean,9.71445146547012e-17,True
+predictor_effect_shift,250,Intercept + slope recalibration,Brier,MCSE,8.192502665843593e-17,True
+predictor_effect_shift,250,Intercept + slope recalibration,PMSE,Mean,2.42861286636753e-17,True
+predictor_effect_shift,250,Intercept + slope recalibration,PMSE,MCSE,2.785721956929943e-17,True
+predictor_effect_shift,250,Intercept + slope recalibration,ROC_AUC,Mean,4.440892098500626e-16,True
+predictor_effect_shift,250,Intercept + slope recalibration,ROC_AUC,MCSE,6.505213034913027e-17,True
+predictor_effect_shift,250,Intercept recalibration,Log_loss,Mean,3.885780586188048e-16,True
+predictor_effect_shift,250,Intercept recalibration,Log_loss,MCSE,1.2197274440461925e-17,True
+predictor_effect_shift,250,Intercept recalibration,Brier,Mean,2.636779683484747e-16,True
+predictor_effect_shift,250,Intercept recalibration,Brier,MCSE,3.537209587733958e-17,True
+predictor_effect_shift,250,Intercept recalibration,PMSE,Mean,2.7755575615628914e-17,True
+predictor_effect_shift,250,Intercept recalibration,PMSE,MCSE,7.185549898147681e-17,True
+predictor_effect_shift,250,Intercept recalibration,ROC_AUC,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,250,Intercept recalibration,ROC_AUC,MCSE,3.67544536472586e-17,True
+predictor_effect_shift,250,No adaptation,Log_loss,Mean,3.885780586188048e-16,True
+predictor_effect_shift,250,No adaptation,Log_loss,MCSE,7.887570804832045e-17,True
+predictor_effect_shift,250,No adaptation,Brier,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,250,No adaptation,Brier,MCSE,5.2339859876737727e-17,True
+predictor_effect_shift,250,No adaptation,PMSE,Mean,2.0816681711721685e-17,True
+predictor_effect_shift,250,No adaptation,PMSE,MCSE,2.0504973587132103e-17,True
+predictor_effect_shift,250,No adaptation,ROC_AUC,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,250,No adaptation,ROC_AUC,MCSE,3.67544536472586e-17,True
+predictor_effect_shift,500,Deployment refit,Log_loss,Mean,1.1102230246251565e-16,True
+predictor_effect_shift,500,Deployment refit,Log_loss,MCSE,3.74049749507499e-17,True
+predictor_effect_shift,500,Deployment refit,Brier,Mean,2.7755575615628914e-17,True
+predictor_effect_shift,500,Deployment refit,Brier,MCSE,2.6346112791397758e-17,True
+predictor_effect_shift,500,Deployment refit,PMSE,Mean,4.8138576458356397e-17,True
+predictor_effect_shift,500,Deployment refit,PMSE,MCSE,1.9447876468958736e-18,True
+predictor_effect_shift,500,Deployment refit,ROC_AUC,Mean,3.3306690738754696e-16,True
+predictor_effect_shift,500,Deployment refit,ROC_AUC,MCSE,5.854691731421724e-18,True
+predictor_effect_shift,500,Intercept + slope recalibration,Log_loss,Mean,4.996003610813204e-16,True
+predictor_effect_shift,500,Intercept + slope recalibration,Log_loss,MCSE,3.5236570605778894e-18,True
+predictor_effect_shift,500,Intercept + slope recalibration,Brier,Mean,2.7755575615628914e-16,True
+predictor_effect_shift,500,Intercept + slope recalibration,Brier,MCSE,8.687169907040104e-17,True
+predictor_effect_shift,500,Intercept + slope recalibration,PMSE,Mean,2.7755575615628914e-17,True
+predictor_effect_shift,500,Intercept + slope recalibration,PMSE,MCSE,4.921261423547485e-17,True
+predictor_effect_shift,500,Intercept + slope recalibration,ROC_AUC,Mean,3.3306690738754696e-16,True
+predictor_effect_shift,500,Intercept + slope recalibration,ROC_AUC,MCSE,1.7780915628762273e-17,True
+predictor_effect_shift,500,Intercept recalibration,Log_loss,Mean,4.996003610813204e-16,True
+predictor_effect_shift,500,Intercept recalibration,Log_loss,MCSE,4.548228113576691e-17,True
+predictor_effect_shift,500,Intercept recalibration,Brier,Mean,1.8041124150158794e-16,True
+predictor_effect_shift,500,Intercept recalibration,Brier,MCSE,8.435092901937224e-17,True
+predictor_effect_shift,500,Intercept recalibration,PMSE,Mean,4.163336342344337e-17,True
+predictor_effect_shift,500,Intercept recalibration,PMSE,MCSE,7.887570804832045e-17,True
+predictor_effect_shift,500,Intercept recalibration,ROC_AUC,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,500,Intercept recalibration,ROC_AUC,MCSE,3.67544536472586e-17,True
+predictor_effect_shift,500,No adaptation,Log_loss,Mean,3.885780586188048e-16,True
+predictor_effect_shift,500,No adaptation,Log_loss,MCSE,7.887570804832045e-17,True
+predictor_effect_shift,500,No adaptation,Brier,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,500,No adaptation,Brier,MCSE,5.2339859876737727e-17,True
+predictor_effect_shift,500,No adaptation,PMSE,Mean,2.0816681711721685e-17,True
+predictor_effect_shift,500,No adaptation,PMSE,MCSE,2.0504973587132103e-17,True
+predictor_effect_shift,500,No adaptation,ROC_AUC,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,500,No adaptation,ROC_AUC,MCSE,3.67544536472586e-17,True
+predictor_effect_shift,1000,Deployment refit,Log_loss,Mean,5.551115123125783e-17,True
+predictor_effect_shift,1000,Deployment refit,Log_loss,MCSE,4.7704895589362195e-18,True
+predictor_effect_shift,1000,Deployment refit,Brier,Mean,1.3877787807814457e-17,True
+predictor_effect_shift,1000,Deployment refit,Brier,MCSE,4.8504494691570255e-17,True
+predictor_effect_shift,1000,Deployment refit,PMSE,Mean,1.235990476633475e-17,True
+predictor_effect_shift,1000,Deployment refit,PMSE,MCSE,2.0904773138236132e-17,True
+predictor_effect_shift,1000,Deployment refit,ROC_AUC,Mean,3.3306690738754696e-16,True
+predictor_effect_shift,1000,Deployment refit,ROC_AUC,MCSE,2.4231918555051024e-17,True
+predictor_effect_shift,1000,Intercept + slope recalibration,Log_loss,Mean,3.3306690738754696e-16,True
+predictor_effect_shift,1000,Intercept + slope recalibration,Log_loss,MCSE,7.643625316022806e-17,True
+predictor_effect_shift,1000,Intercept + slope recalibration,Brier,Mean,4.163336342344337e-17,True
+predictor_effect_shift,1000,Intercept + slope recalibration,Brier,MCSE,6.76000054544712e-17,True
+predictor_effect_shift,1000,Intercept + slope recalibration,PMSE,Mean,3.2959746043559335e-17,True
+predictor_effect_shift,1000,Intercept + slope recalibration,PMSE,MCSE,9.925870889104793e-17,True
+predictor_effect_shift,1000,Intercept + slope recalibration,ROC_AUC,Mean,4.440892098500626e-16,True
+predictor_effect_shift,1000,Intercept + slope recalibration,ROC_AUC,MCSE,6.754579534584693e-17,True
+predictor_effect_shift,1000,Intercept recalibration,Log_loss,Mean,2.220446049250313e-16,True
+predictor_effect_shift,1000,Intercept recalibration,Log_loss,MCSE,8.185726402265558e-17,True
+predictor_effect_shift,1000,Intercept recalibration,Brier,Mean,2.7755575615628914e-16,True
+predictor_effect_shift,1000,Intercept recalibration,Brier,MCSE,4.027811070783649e-17,True
+predictor_effect_shift,1000,Intercept recalibration,PMSE,Mean,5.204170427930421e-17,True
+predictor_effect_shift,1000,Intercept recalibration,PMSE,MCSE,1.5165277887640993e-17,True
+predictor_effect_shift,1000,Intercept recalibration,ROC_AUC,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,1000,Intercept recalibration,ROC_AUC,MCSE,3.67544536472586e-17,True
+predictor_effect_shift,1000,No adaptation,Log_loss,Mean,3.885780586188048e-16,True
+predictor_effect_shift,1000,No adaptation,Log_loss,MCSE,7.887570804832045e-17,True
+predictor_effect_shift,1000,No adaptation,Brier,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,1000,No adaptation,Brier,MCSE,5.2339859876737727e-17,True
+predictor_effect_shift,1000,No adaptation,PMSE,Mean,2.0816681711721685e-17,True
+predictor_effect_shift,1000,No adaptation,PMSE,MCSE,2.0504973587132103e-17,True
+predictor_effect_shift,1000,No adaptation,ROC_AUC,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,1000,No adaptation,ROC_AUC,MCSE,3.67544536472586e-17,True
+predictor_effect_shift,5000,Deployment refit,Log_loss,Mean,0.0,True
+predictor_effect_shift,5000,Deployment refit,Log_loss,MCSE,1.7509865085640897e-17,True
+predictor_effect_shift,5000,Deployment refit,Brier,Mean,2.7755575615628914e-17,True
+predictor_effect_shift,5000,Deployment refit,Brier,MCSE,3.8082601308553343e-17,True
+predictor_effect_shift,5000,Deployment refit,PMSE,Mean,3.1590940800796385e-17,True
+predictor_effect_shift,5000,Deployment refit,PMSE,MCSE,5.593382067193772e-18,True
+predictor_effect_shift,5000,Deployment refit,ROC_AUC,Mean,0.0,True
+predictor_effect_shift,5000,Deployment refit,ROC_AUC,MCSE,5.805902633659876e-17,True
+predictor_effect_shift,5000,Intercept + slope recalibration,Log_loss,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,5000,Intercept + slope recalibration,Log_loss,MCSE,3.7133924407628527e-17,True
+predictor_effect_shift,5000,Intercept + slope recalibration,Brier,Mean,1.8041124150158794e-16,True
+predictor_effect_shift,5000,Intercept + slope recalibration,Brier,MCSE,7.901123331988114e-18,True
+predictor_effect_shift,5000,Intercept + slope recalibration,PMSE,Mean,3.469446951953614e-17,True
+predictor_effect_shift,5000,Intercept + slope recalibration,PMSE,MCSE,6.87807693829437e-17,True
+predictor_effect_shift,5000,Intercept + slope recalibration,ROC_AUC,Mean,0.0,True
+predictor_effect_shift,5000,Intercept + slope recalibration,ROC_AUC,MCSE,6.158268339717665e-17,True
+predictor_effect_shift,5000,Intercept recalibration,Log_loss,Mean,3.885780586188048e-16,True
+predictor_effect_shift,5000,Intercept recalibration,Log_loss,MCSE,9.486769009248164e-17,True
+predictor_effect_shift,5000,Intercept recalibration,Brier,Mean,4.85722573273506e-16,True
+predictor_effect_shift,5000,Intercept recalibration,Brier,MCSE,6.865710257264457e-17,True
+predictor_effect_shift,5000,Intercept recalibration,PMSE,Mean,2.42861286636753e-17,True
+predictor_effect_shift,5000,Intercept recalibration,PMSE,MCSE,6.221965217351189e-17,True
+predictor_effect_shift,5000,Intercept recalibration,ROC_AUC,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,5000,Intercept recalibration,ROC_AUC,MCSE,3.67544536472586e-17,True
+predictor_effect_shift,5000,No adaptation,Log_loss,Mean,3.885780586188048e-16,True
+predictor_effect_shift,5000,No adaptation,Log_loss,MCSE,7.887570804832045e-17,True
+predictor_effect_shift,5000,No adaptation,Brier,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,5000,No adaptation,Brier,MCSE,5.2339859876737727e-17,True
+predictor_effect_shift,5000,No adaptation,PMSE,Mean,2.0816681711721685e-17,True
+predictor_effect_shift,5000,No adaptation,PMSE,MCSE,2.0504973587132103e-17,True
+predictor_effect_shift,5000,No adaptation,ROC_AUC,Mean,1.6653345369377348e-16,True
+predictor_effect_shift,5000,No adaptation,ROC_AUC,MCSE,3.67544536472586e-17,True

@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "Please cite this research software when using it."
-title: "Predictive Stability Under Distribution Shift: Calibration, Discrimination, and Decision Thresholds with a Loan-Default Application"
+message: "Please cite this work when using the manuscript or research materials."
+title: "Predictive Stability and Adaptation Under Distribution Shift: Calibration, Discrimination, and Decision Thresholds in Credit-Risk Modeling"
 type: software
 authors:
   - family-names: Bambil
